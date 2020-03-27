@@ -1,0 +1,39 @@
+{
+    "list": [{
+            "id": 1,
+            "course": "Java",
+            "student": "张三",
+            "time": "2019/6/20 9:00-11:00",
+            "state": "未批改",
+            "test": [{
+				"test_id": 1,
+				"test_title": "以下哪个关键字可以用来为对象加互斥锁？",
+				"options": {
+					"1": "transient",
+					"2": "static",
+					"3": "serialize",
+					"4": "synchronized"
+				},
+				"answer": "D",
+				"stu_answer": "A",
+				"test_score": 5,
+				"score": ""
+			},
+			{
+				"test_id": 2,
+				"test_title": "在Java中,下列关于方法重载的说法中错误的是?",
+				"options": {
+					"1": "",
+					"2": "",
+					"3": "",
+					"4": ""
+				},
+				"answer": "D",
+				"stu_answer": "A",
+				"test_score": 5,
+				"score": ""
+			}]
+        }
+    ],
+    "pageTotal": 1
+}

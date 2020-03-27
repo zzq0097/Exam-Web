@@ -1,0 +1,32 @@
+{
+    "list": [{
+            "id": 1,
+            "teacher": "刘安站",
+            "course": "C++",
+			"class": "RB软工网162",
+            "teach_time": "2017-上"
+        },
+        {
+			"id": 2,
+			"teacher": "张三",
+			"course": "HTML",
+			"class": "RB软工网162",
+			"teach_time": "2017-下"
+		},
+       {
+			"id": 3,
+			"teacher": "李四",
+			"course": "Java",
+			"class": "RB软工网162",
+			"teach_time": "2017-下"
+        },
+        {
+        	"id": 4,
+        	"teacher": "王五",
+        	"course": "Python",
+        	"class": "RB软工网162",
+        	"teach_time": "2017-下"
+        }
+    ],
+    "pageTotal": 4
+}
