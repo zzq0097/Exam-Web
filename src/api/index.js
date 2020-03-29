@@ -1,4 +1,5 @@
 import request from '../utils/request';
+import qs from 'qs';
 // const ServerUrl = 'http://nu50abw.hn3.mofasuidao.cn/exam';
 const ServerUrl = 'http://localhost:8088/exam';
 
@@ -51,9 +52,12 @@ export const deleteUser = query => {
     return request({
         // url: './user.json',
 		url: ServerUrl+'/deleteUser',
-        method: 'delete',
+        method: 'post',
         params: query,
-    });
+		paramsSerializer: params => {
+			return qs.stringify(params, { indices: false })
+		}
+    })
 };
 export const updateUser = query => {
     return request({

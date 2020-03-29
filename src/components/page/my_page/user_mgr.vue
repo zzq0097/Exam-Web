@@ -15,7 +15,7 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.role" placeholder="角色" class="handle-select mr10" @change="getData">
+                <el-select v-model="query.role" placeholder="角色" class="handle-select mr10" @change="getUserByRole">
                     <el-option key="1" label="教师" value="2"></el-option>
                     <el-option key="2" label="学生" value="3"></el-option>
 					<el-option key="3" label="管理员" value="1"></el-option>
@@ -112,26 +112,26 @@
 		<el-dialog title="添加用户" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 		        <el-form-item label="用户名">
-		            <el-input v-model="query.username"></el-input>
+		            <el-input v-model="add_param.username"></el-input>
 		        </el-form-item>
 				<el-form-item label="密码">
-				    <el-input v-model="query.password"></el-input>
+				    <el-input v-model="add_param.password"></el-input>
 				</el-form-item>
 				<el-form-item label="姓名">
-				    <el-input v-model="query.name"></el-input>
+				    <el-input v-model="add_param.name"></el-input>
 				</el-form-item>
 				<el-form-item label="电话">
-				    <el-input v-model="query.tel"></el-input>
+				    <el-input v-model="add_param.tel"></el-input>
 				</el-form-item>
 				<el-form-item label="角色">
-					<el-select v-model="query.role">
+					<el-select v-model="add_param.role">
 						<el-option label="管理员" value="1"></el-option>
 						<el-option label="教师" value="2"></el-option>
 						<el-option label="学生" value="3"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="班级">
-				    <el-select v-model="query.classid">
+				    <el-select v-model="add_param.classid">
 						<el-option
 							v-for="item in class_list"
 							:key="item.classid"
@@ -181,14 +181,18 @@ export default {
         return {
             query: {
 				role: '',
+				name: '',
+				pageIndex: 1, 
+				pageSize: 5
+            },
+			add_param:{
+				role: '',
 				classid: '',
 				username: '',
 				password: '',
 				tel: '',
 				name: '',
-				pageIndex: 1, 
-				pageSize: 5
-            },
+			},
             tableData: [],
             multipleSelection: [],
             delList: [],
@@ -227,17 +231,17 @@ export default {
 				this.class_list = res
 			})
 		},
+		getUserByRole(){
+			this.query.name = '';
+			this.getData();
+		},
         // 触发搜索按钮
         handleSearch() {
 			this.query.role = '';
-            getUserInfo(this.query).then(res => {
-            	console.log(res);
-            	this.tableData = res.list;
-            	this.pageTotal = res.pageTotal;
-            });
+            this.getData();
         },
 		addUser(){
-			insertUser(this.query).then(res=>{
+			insertUser(this.add_param).then(res=>{
 				this.getData();
 				this.add_editVisible = false;
 				this.$message.success('添加成功');
@@ -250,7 +254,7 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-					deleteUser({ids: row.id}).then(res=>{
+					deleteUser({ids: [row.id]}).then(res=>{
 						this.getData();
 						this.$message.success('删除成功');
 					})
@@ -270,10 +274,14 @@ export default {
                 str += this.multipleSelection[i].name + ' ';
 				id_list.push(this.delList[i].id);
             }
-			// deleteUser({ids: id_list});
-			// this.getData();
-            this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
+			if (length>0){
+				deleteUser({ids: id_list}).then(res=>{
+					this.$message.error(res.msg);
+					this.multipleSelection = [];
+					this.query.pageIndex = 1;
+					this.getData();
+				});
+			}
         },
         // 编辑操作
         handleEdit(index, row) {
