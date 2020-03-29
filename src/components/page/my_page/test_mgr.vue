@@ -56,7 +56,6 @@
 				<el-table-column prop="difficulty" label="难度" width="55" align="center"></el-table-column>
                 <el-table-column prop="coursename" label="所属课程" width="120" align="center"></el-table-column>
                 <el-table-column prop="chaptername" label="所属章节" width="70" align="center"></el-table-column>
-                <el-table-column prop="insert_time" label="添加时间" width="100" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button

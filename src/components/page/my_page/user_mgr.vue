@@ -15,7 +15,7 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.role" placeholder="角色" class="handle-select mr10" @change="getUserByRole">
+                <el-select v-model="query.role" placeholder="角色" class="handle-select mr10" @change="getData">
                     <el-option key="1" label="教师" value="2"></el-option>
                     <el-option key="2" label="学生" value="3"></el-option>
 					<el-option key="3" label="管理员" value="1"></el-option>
@@ -39,7 +39,6 @@
 				<el-table-column prop="tel" label="电话" align="center"></el-table-column>
                 <el-table-column prop="role" label="角色" align="center"></el-table-column>
 				<el-table-column prop="classname" label="班级" align="center"></el-table-column>
-                <el-table-column prop="insert_date" label="添加时间" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -132,12 +131,12 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="班级">
-				    <el-select v-model="query.classname">
+				    <el-select v-model="query.classid">
 						<el-option
 							v-for="item in class_list"
 							:key="item.classid"
 							:label="item.classname"
-							:value="item.classname">
+							:value="item.classid">
 						</el-option>
 				    </el-select>
 				</el-form-item>
@@ -182,11 +181,13 @@ export default {
         return {
             query: {
 				role: '',
-				classname: '',
+				classid: '',
 				username: '',
 				password: '',
 				tel: '',
-				name: ''
+				name: '',
+				pageIndex: 1, 
+				pageSize: 5
             },
             tableData: [],
             multipleSelection: [],
@@ -214,10 +215,10 @@ export default {
 		},
         // 获取 easy-mock 的模拟数据
         getData() {
-            getUserInfo().then(res => {
+            getUserInfo(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
+                this.pageTotal = res.pageTotal;
             });
         },
 		getClassList() {
@@ -226,21 +227,13 @@ export default {
 				this.class_list = res
 			})
 		},
-		getUserByRole() {
-			this.query.name = '';
-			getUserInfo(this.query).then(res => {
-				console.log(res);
-				this.tableData = res.list;
-				this.pageTotal = res.pageTotal || 50;
-			});
-		},
         // 触发搜索按钮
         handleSearch() {
 			this.query.role = '';
             getUserInfo(this.query).then(res => {
             	console.log(res);
             	this.tableData = res.list;
-            	this.pageTotal = res.pageTotal || 50;
+            	this.pageTotal = res.pageTotal;
             });
         },
 		addUser(){

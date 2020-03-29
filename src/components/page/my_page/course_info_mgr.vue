@@ -37,7 +37,6 @@
                 <el-table-column prop="coursename" label="课程" align="center"></el-table-column>
                 <el-table-column prop="index" label="章节" align="center"></el-table-column>
                 <el-table-column prop="chaptername" label="章节名" align="center"></el-table-column>
-                <el-table-column prop="insert_time" label="添加时间" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -72,28 +71,6 @@
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px">
 		        <el-form-item label="课程">
-		            <el-input v-model="form.course"></el-input>
-		        </el-form-item>
-		        <el-form-item label="章节">
-		            <el-input v-model="form.index"></el-input>
-		        </el-form-item>
-				<el-form-item label="章节名">
-				    <el-input v-model="form.name"></el-input>
-				</el-form-item>
-				<el-form-item label="章节信息">
-				    <el-input v-model="form.info"></el-input>
-				</el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
-            </span>
-        </el-dialog>
-		
-		<!-- 添加弹出框 -->
-		<el-dialog title="添加用户" :visible.sync="add_editVisible" width="30%">
-		    <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item label="课程">
 		            <el-select v-model="form.courseid" placeholder="课程" @change="getChapterList">
 		                <el-option
 		                	v-for="item in course_list"
@@ -104,25 +81,45 @@
 		            </el-select>
 		        </el-form-item>
 		        <el-form-item label="章节">
-		            <el-select v-model="form.chapterid" placeholder="课程" @change="getChapterList">
-		                <el-option
-		                	v-for="item in chapter_list"
-		                	:key="item.chapterid"
-		                	:label="item.chaptername"
-		                	:value="item.chapterid">
-		                </el-option>
+		            <el-select v-model="form.index" placeholder="章节" @change="getChapterList">
+		                <el-option v-for="i in 15" :key="i" :label="i" :value="i"></el-option>
 		            </el-select>
 		        </el-form-item>
 				<el-form-item label="章节名">
-				    <el-input v-model="form.name"></el-input>
+				    <el-input v-model="form.chaptername"></el-input>
 				</el-form-item>
-				<el-form-item label="章节信息">
-				    <el-input v-model="form.info"></el-input>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveEdit">确 定</el-button>
+            </span>
+        </el-dialog>
+		
+		<!-- 添加弹出框 -->
+		<el-dialog title="添加章节" :visible.sync="add_editVisible" width="30%">
+		    <el-form ref="form" :model="form" label-width="70px">
+		        <el-form-item label="课程">
+		            <el-select v-model="insert_param.courseid" placeholder="课程" @change="getChapterList">
+		                <el-option
+		                	v-for="item in course_list"
+		                	:key="item.courseid"
+		                	:label="item.coursename"
+		                	:value="item.courseid">
+		                </el-option>
+		            </el-select>
+		        </el-form-item>
+		        <el-form-item label="章节">
+		            <el-select v-model="insert_param.index" placeholder="章节" @change="getChapterList">
+		                <el-option v-for="i in 15" :key="i" :label="i" :value="i"></el-option>
+		            </el-select>
+		        </el-form-item>
+				<el-form-item label="章节名">
+				    <el-input v-model="insert_param.chaptername"></el-input>
 				</el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="add_editVisible = false">取 消</el-button>
-		        <el-button type="primary" @click="saveEdit">确 定</el-button>
+		        <el-button type="primary" @click="saveInsert">确 定</el-button>
 		    </span>
 		</el-dialog>
 		
@@ -132,16 +129,25 @@
 <script>
 import { getCourseList } from '../../../api/index.js';
 import { getChapterList } from '../../../api/index.js';
+import { listChapter } from '../../../api/index.js';
+import { insertChapter } from '../../../api/index.js';
+import { updateChapter } from '../../../api/index.js';
 export default {
     name: 'course_info_mgr',
     data() {
         return {
             query: {
                 courseid: '',
-				coursename: '',
+				chaptername: '',
+				index: '',
                 pageIndex: 1,
                 pageSize: 1000
             },
+			insert_param: {
+				courseid: '',
+				chaptername: '',
+				index: '',
+			},
             tableData: [],
             multipleSelection: [],
             delList: [],
@@ -165,7 +171,7 @@ export default {
 		},
         // 获取 easy-mock 的模拟数据
         getData() {
-            getChapterList(this.query).then(res => {
+            listChapter(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
                 this.pageTotal = res.pageTotal || 50;
@@ -177,9 +183,12 @@ export default {
 				this.course_list = res;
 			});
 		},
-		// getChapterList(){
-			
-		// },
+		getChapterList(){
+			// getChapterList(this.query).then(res=>{
+			// 	console.log(res);
+			// 	this.chapter_list = res;
+			// });
+		},
         // 触发搜索按钮
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
@@ -218,10 +227,20 @@ export default {
             this.editVisible = true;
         },
         // 保存编辑
-        saveEdit() {
-            this.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-            this.$set(this.tableData, this.idx, this.form);
+		saveEdit() {
+		    updateChapter(this.form).then(res=>{
+				this.$message.success(`修改成功`);
+				this.editVisible = false;
+				this.getData();
+			})
+		},
+        saveInsert() {
+            insertChapter(this.insert_param).then(res=>{
+				this.$message.success(`新增成功`);
+				this.add_editVisible = false;
+				this.insert_param = '';
+				this.getData();
+			})
         },
         // 分页导航
         handlePageChange(val) {

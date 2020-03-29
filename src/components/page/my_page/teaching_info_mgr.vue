@@ -15,12 +15,13 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.address" placeholder="课程" class="handle-select mr10">
-					<el-option key="1" label="所有课程" value="所有课程"></el-option>
-                    <el-option key="2" label="C++" value="教师"></el-option>
-                    <el-option key="3" label="Python" value="学生"></el-option>
-					<el-option key="4" label="Java" value="班级"></el-option>
-					<el-option key="5" label="C#" value="管理员"></el-option>
+                <el-select v-model="query.courseid" placeholder="课程" @change="getClassList">
+                    <el-option
+                    	v-for="item in course_list"
+                    	:key="item.courseid"
+                    	:label="item.coursename"
+                    	:value="item.courseid">
+                    </el-option>
                 </el-select>
                 <el-input v-model="query.name" placeholder="教师姓名" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
@@ -36,9 +37,8 @@
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="teacher" label="教师姓名" align="center"></el-table-column>
-                <el-table-column prop="course" label="课程" align="center"></el-table-column>
 				<el-table-column prop="class" label="授课班级" align="center"></el-table-column>
-                <el-table-column prop="teach_time" label="授课学期" align="center"></el-table-column>
+				<el-table-column prop="course" label="课程" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button

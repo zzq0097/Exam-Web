@@ -1,5 +1,6 @@
 import request from '../utils/request';
-const ServerUrl = 'http://nu50abw.hn3.mofasuidao.cn/exam';
+// const ServerUrl = 'http://nu50abw.hn3.mofasuidao.cn/exam';
+const ServerUrl = 'http://localhost:8088/exam';
 
 // ---------------------------------------- 登录
 export const login = query => {
@@ -28,7 +29,7 @@ export const getCourseList = query => {
         params: query
     });
 };
-// ---------------------------------------- 获取章节下拉框列表
+// ---------------------------------------- 获取章节index下拉框列表
 export const getChapterList = query => {
 	return request({
 		// url: './user.json',
@@ -69,6 +70,31 @@ export const insertUser = query => {
         method: 'post',
         params: query
     });
+};
+// ---------------------------------------- 章节管理
+export const listChapter = query => {
+	return request({
+		// url: './user.json',
+		url: ServerUrl+'/listChapter',
+		method: 'get',
+		params: query
+	});
+};
+export const insertChapter = query => {
+	return request({
+		// url: './user.json',
+		url: ServerUrl+'/insertChapter',
+		method: 'post',
+		params: query
+	});
+};
+export const updateChapter = query => {
+	return request({
+		// url: './user.json',
+		url: ServerUrl+'/updateChapter',
+		method: 'post',
+		params: query
+	});
 };
 // selectTestByCourse 
 export const getPaper = query => {
