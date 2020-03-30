@@ -194,8 +194,7 @@ export default {
 				name: '',
 			},
             tableData: [],
-            multipleSelection: [],
-            delList: [],
+			idList: [],
             editVisible: false,
 			add_editVisible: false,
 			add_batch: false,
@@ -263,21 +262,15 @@ export default {
         },
         // 多选操作
         handleSelectionChange(val) {
-            this.multipleSelection = val;
+			this.idList = [];
+			for (var i=0;i<val.length;i++){
+				this.idList.push(val[i].id)
+			}
         },
         delAllSelection() {
-            const length = this.multipleSelection.length;
-            this.delList = this.delList.concat(this.multipleSelection);
-			var str = '';
-			var id_list = [];
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-				id_list.push(this.delList[i].id);
-            }
-			if (length>0){
-				deleteUser({ids: id_list}).then(res=>{
+			if (this.idList.length>0){
+				deleteUser({ids: this.idList}).then(res=>{
 					this.$message.error(res.msg);
-					this.multipleSelection = [];
 					this.query.pageIndex = 1;
 					this.getData();
 				});
