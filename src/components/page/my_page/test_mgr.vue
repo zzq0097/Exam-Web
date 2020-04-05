@@ -83,7 +83,7 @@
                 ></el-pagination>
             </div>
 		<el-button type="primary" @click="showAddDlg">添加试题</el-button>
-		<el-button type="primary">批量导入</el-button>
+		<el-button type="primary" @click="showAddsDlg">批量导入</el-button>
         </div>
 
         <!-- 编辑弹出框 -->
@@ -133,6 +133,23 @@
                 <el-button type="primary" @click="saveEdit">确 定</el-button>
             </span>
         </el-dialog>
+		
+		<!-- 批量导入弹出框 -->
+		<el-dialog title="批量添加" :visible.sync="add_batch" width="30%">
+		    <el-form ref="form" :model="form" label-width="70px">
+		        <el-upload
+					class="upload-demo"
+					drag
+					action="http://localhost:8088/exam/importQuestion"
+					multiple>
+					<i class="el-icon-upload"></i>
+					<div class="el-upload__text">将Excel文件拖到此处，或<em>点击上传</em></div>
+		        </el-upload>
+		    </el-form>
+		    <span slot="footer" class="dialog-footer">
+		        <el-button @click="add_batch = false">确定</el-button>
+		    </span>
+		</el-dialog>
 		
 		<!-- 添加弹出框 -->
 		<el-dialog title="添加用户" :visible.sync="add_editVisible" width="30%">
@@ -184,6 +201,7 @@ export default {
             delList: [],
             editVisible: false,
 			add_editVisible: false,
+			add_batch: false,
             pageTotal: 0,
             form: {},
             idx: -1,
@@ -199,6 +217,9 @@ export default {
     methods: {
 		showAddDlg() {
 			this.add_editVisible = true
+		},
+		showAddsDlg() {
+			this.add_batch = true
 		},
         getData() {
             getTestLib(this.query).then(res => {

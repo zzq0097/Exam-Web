@@ -15,13 +15,22 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.address" placeholder="关键字" class="handle-select mr10">
-                    <el-option key="1" label="课程名" value="课程名"></el-option>
-                    <el-option key="2" label="时间" value="时间"></el-option>
-					<el-option key="3" label="班级" value="班级"></el-option>
+                <el-select v-model="query.courseid" placeholder="课程" @change="getData" class="handle-select mr10">
+                    <el-option
+                    	v-for="item in course_list"
+                    	:key="item.courseid"
+                    	:label="item.coursename"
+                    	:value="item.courseid">
+                    </el-option>
                 </el-select>
-                <el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
-                <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+				<el-select v-model="query.classid" placeholder="班级" @change="getData">
+				    <el-option
+				    	v-for="item in class_list"
+				    	:key="item.classid"
+				    	:label="item.classname"
+				    	:value="item.classid">
+				    </el-option>
+				</el-select>
             </div>
             <el-table
                 :data="tableData"
@@ -32,11 +41,12 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="paperId" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="pattern" label="考试模式" width="100" align="center"></el-table-column>
-				<el-table-column prop="monitor" label="是否开启监控" width="120" align="center"></el-table-column>
-				<el-table-column prop="start_time" label="考试开始时间" align="center"></el-table-column>
-				<el-table-column prop="course" label="考试相关课程" align="center"></el-table-column>
+				<el-table-column prop="isMonitor" label="是否开启监控" width="120" align="center"></el-table-column>
+				<el-table-column prop="startTime" label="考试开始时间" align="center"></el-table-column>
+				<el-table-column prop="finishTime" label="考试结束时间" align="center"></el-table-column>
+				<el-table-column prop="courseName" label="考试相关课程" align="center"></el-table-column>
                 <el-table-column label="操作" width="300" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -75,7 +85,14 @@
         <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
             <el-form ref="form" :model="form" label-width="100px">
 				<el-form-item label="考试课程">
-				    <el-input v-model="form.course"></el-input>
+				    <el-select v-model="query.courseid" placeholder="课程" disabled class="handle-select mr10">
+				        <el-option
+				        	v-for="item in course_list"
+				        	:key="item.courseid"
+				        	:label="item.coursename"
+				        	:value="item.courseid">
+				        </el-option>
+				    </el-select>
 				</el-form-item>
                 <el-form-item label="考试模式">
                     <el-input v-model="form.pattern"></el-input>
@@ -111,27 +128,19 @@
 <script>
 import axios from 'axios'
 import { getPaper } from '../../../api/index';
+import { getClassList } from '../../../api/index';
+import { getCourseList } from '../../../api/index';
 export default {
     name: 'paper',
     data() {
         return {
             query: {
-                address: '',
-                name: '',
+                courseid: '',
+                classid: '',
                 pageIndex: 1,
                 pageSize: 10
             },
-			test: [{
-					test_id: 1,
-					test_title: "qqqqqqqqqqqqqq",
-					test_score: 5
-				},
-				{
-					test_id: 2,
-					test_title: "aaaaaaaaaaaaaaaa",
-					test_score: 5
-				}
-			],
+			test_list: [],
             tableData: [],
             multipleSelection: [],
             delList: [],
@@ -141,11 +150,15 @@ export default {
             pageTotal: 0,
             form: {},
             idx: -1,
-            id: -1
+            id: -1,
+			class_list: '',
+			course_list: ''
         };
     },
     created() {
         this.getData();
+		this.getClassList();
+		this.getCourseList();
     },
     methods: {
 		add_paper(){
@@ -159,6 +172,18 @@ export default {
                 this.pageTotal = res.pageTotal || 50;
             });
         },
+		getClassList() {
+			getClassList().then(res=>{
+				console.log(res);
+				this.class_list = res
+			})
+		},
+		getCourseList(){
+			getCourseList().then(res=>{
+				console.log(res);
+				this.course_list = res;
+			});
+		},
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
             this.getData();

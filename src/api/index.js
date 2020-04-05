@@ -103,8 +103,8 @@ export const updateChapter = query => {
 // selectTestByCourse 
 export const getPaper = query => {
     return request({
-        url: './paper.json',
-		// url: ServerUrl+'',
+        // url: './paper.json',
+		url: ServerUrl+'/getPaperList',
         method: 'get',
         params: query
     });

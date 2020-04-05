@@ -169,7 +169,6 @@
 </template>
 
 <script>
-import qs from 'qs';
 import { getUserInfo } from '../../../api/index.js';
 import { insertUser } from '../../../api/index.js';
 import { deleteUser } from '../../../api/index.js';
