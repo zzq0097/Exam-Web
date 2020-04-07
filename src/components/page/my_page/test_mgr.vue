@@ -194,7 +194,9 @@ export default {
                 courseid: '',
 				chapterid: '',
 				type: '',
-				key: ''
+                key: '',
+                pageIndex: 1,
+                pageSize: 10
             },
             add_param: {
                 chapterid: '',
@@ -235,7 +237,7 @@ export default {
             getTestLib(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
+                this.pageTotal = res.pageTotal;
 				if(this.query.courseid !== ''){
 					getChapterList({courseid: this.query.courseid}).then(res=>{
 						this.chapter_list = res

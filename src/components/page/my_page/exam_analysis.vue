@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import { getUserInfo } from '../../../api/index.js';
+import { getUserInfo } from '../../../api/UserAPI.js';
 export default {
     name: 'user',
     data() {

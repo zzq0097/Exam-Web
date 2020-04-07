@@ -169,10 +169,10 @@
 </template>
 
 <script>
-import { getUserInfo } from '../../../api/index.js';
-import { insertUser } from '../../../api/index.js';
-import { deleteUser } from '../../../api/index.js';
-import { updateUser } from '../../../api/index.js';
+import { getUserInfo } from '../../../api/UserAPI.js';
+import { insertUser } from '../../../api/UserAPI.js';
+import { deleteUser } from '../../../api/UserAPI.js';
+import { updateUser } from '../../../api/UserAPI.js';
 import { getClassList } from '../../../api/index.js';
 export default {
     name: 'user',
@@ -206,7 +206,7 @@ export default {
     },
     created() {
         this.getData();
-		this.getClassList();
+		getClassList().then(res=>{ this.class_list = res })
     },
     methods: {
 		showAddDlg() {
@@ -223,12 +223,6 @@ export default {
                 this.pageTotal = res.pageTotal;
             });
         },
-		getClassList() {
-			getClassList().then(res=>{
-				console.log(res);
-				this.class_list = res
-			})
-		},
 		getUserByRole(){
 			this.query.name = '';
 			this.getData();

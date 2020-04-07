@@ -47,12 +47,12 @@ export default {
             this.$refs.login.validate(valid => {
                 if (valid) {
 					login(this.param).then(res=>{
-						if (res.code === 0){
-							this.$message.success('登录成功');
-							localStorage.setItem('ms_username', this.param.username);
+						if (res.code === 200){
+							this.$message.success(res.msg);
+							localStorage.setItem('ms_username', res.data.name);
 							this.$router.push('/');
 						} else {
-							this.$message.error('账号或密码错误');
+							this.$message.error(res.msg);
 						}
 					})
                 } else {
