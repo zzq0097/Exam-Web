@@ -15,12 +15,20 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.courseid" placeholder="课程" @change="getClassList">
+                <el-select v-model="query.courseid" placeholder="课程" @change="getCourseList">
                     <el-option
                     	v-for="item in course_list"
                     	:key="item.courseid"
                     	:label="item.coursename"
                     	:value="item.courseid">
+                    </el-option>
+                </el-select>
+                <el-select v-model="query.classid" placeholder="班级" @change="getClassList">
+                    <el-option
+                    	v-for="item in class_list"
+                    	:key="item.classid"
+                    	:label="item.classname"
+                    	:value="item.classid">
                     </el-option>
                 </el-select>
                 <el-input v-model="query.name" placeholder="教师姓名" class="handle-input mr10"></el-input>
@@ -118,29 +126,35 @@
 
 <script>
 import { getTeachingInfo } from '../../../api/index.js';
+import { getCourseList } from '../../../api/index.js';
+import { getClassList } from '../../../api/index.js';
 export default {
     name: 'teaching_info_mgr',
     data() {
         return {
             query: {
-                address: '',
+                courseid: '',
+                classid: '',
                 name: '',
                 pageIndex: 1,
                 pageSize: 10
             },
             tableData: [],
-            multipleSelection: [],
-            delList: [],
+			idList: [],
             editVisible: false,
 			add_editVisible: false,
             pageTotal: 0,
             form: {},
             idx: -1,
-            id: -1
+            id: -1,
+            course_list: '',
+            class_list: ''
         };
     },
     created() {
         this.getData();
+        getCourseList().then(res=>{ this.course_list = res });
+        getClassList().then(res=>{ this.class_list = res });
     },
     methods: {
 		showAddDlg() {
@@ -151,7 +165,7 @@ export default {
             getTeachingInfo(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
+                this.pageTotal = res.pageTotal;
             });
         },
         // 触发搜索按钮
@@ -173,17 +187,19 @@ export default {
         },
         // 多选操作
         handleSelectionChange(val) {
-            this.multipleSelection = val;
+			this.idList = [];
+			for (var i=0;i<val.length;i++){
+				this.idList.push(val[i].id)
+			}
         },
         delAllSelection() {
-            const length = this.multipleSelection.length;
-            let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-            }
-            this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
+			if (this.idList.length>0){
+				deleteUser({ids: this.idList}).then(res=>{
+					this.$message.error(res.msg);
+					this.query.pageIndex = 1;
+					this.getData();
+				});
+			}
         },
         // 编辑操作
         handleEdit(index, row) {

@@ -152,7 +152,7 @@
 				</el-form-item>
 		        <el-form-item label="题目数量">
 		            <el-select v-model="data">
-		            	<el-option v-for="i in 20" label="">{{i}}</el-option>
+		            	<el-option v-for="i in 20" :key="i" label="">{{i}}</el-option>
 		            </el-select>
 		        </el-form-item>
 		        <el-form-item label="题目难度">
@@ -164,7 +164,7 @@
 		        </el-form-item>
 				<el-form-item label="题目分值">
 				    <el-select v-model="data">
-				    	<el-option v-for="i in 20" label="">{{i}}</el-option>
+				    	<el-option v-for="i in 20" :key="i" label="">{{i}}</el-option>
 				    </el-select>
 				</el-form-item>
 		    </el-form>

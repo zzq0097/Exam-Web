@@ -15,14 +15,14 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.address" placeholder="角色" class="handle-select mr10">
-                    <el-option key="1" label="教师" value="教师"></el-option>
-                    <el-option key="2" label="学生" value="学生"></el-option>
-					<el-option key="3" label="班级" value="班级"></el-option>
-					<el-option key="4" label="管理员" value="管理员"></el-option>
+                <el-select v-model="query.type" placeholder="类型" class="handle-select mr10">
+                    <el-option
+                        v-for="item in type_list"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                    </el-option>
                 </el-select>
-                <el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
-                <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
             </div>
             <el-table
                 :data="tableData"
@@ -35,9 +35,8 @@
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="name" label="程序名" align="center"></el-table-column>
-				<el-table-column prop="name" label="程序类型" align="center"></el-table-column>
-                <el-table-column prop="username" label="进程名" align="center"></el-table-column>
-                <el-table-column prop="insert_date" label="添加时间" align="center"></el-table-column>
+				<el-table-column prop="type" label="程序类型" align="center"></el-table-column>
+                <el-table-column prop="process" label="进程名" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -64,27 +63,20 @@
                     @current-change="handlePageChange"
                 ></el-pagination>
             </div>
-		<el-button type="primary" @click="showAddDlg">添加用户</el-button>
-		<el-button type="primary" @click="showAddsDlg">批量导入</el-button>
+		<el-button type="primary" @click="showAddDlg">添加黑名单程序</el-button>
         </div>
 
         <!-- 编辑弹出框 -->
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item label="姓名">
+		        <el-form-item label="程序名">
 		            <el-input v-model="form.name"></el-input>
 		        </el-form-item>
-		        <el-form-item label="用户名">
-		            <el-input v-model="form.username"></el-input>
+		        <el-form-item label="类型">
+		            <el-input v-model="form.type"></el-input>
 		        </el-form-item>
-				<el-form-item label="密码">
-				    <el-input v-model="form.password"></el-input>
-				</el-form-item>
-				<el-form-item label="角色">
-				    <el-input v-model="form.role"></el-input>
-				</el-form-item>
-				<el-form-item label="班级">
-				    <el-input v-model="form.class"></el-input>
+				<el-form-item label="进程名">
+				    <el-input v-model="form.process"></el-input>
 				</el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -94,77 +86,60 @@
         </el-dialog>
 		
 		<!-- 添加弹出框 -->
-		<el-dialog title="添加用户" :visible.sync="add_editVisible" width="30%">
+		<el-dialog title="添加黑名单进程" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item label="姓名">
-		            <el-input v-model="form.name"></el-input>
+		        <el-form-item label="程序名">
+		            <el-input v-model="add_param.name"></el-input>
 		        </el-form-item>
-		        <el-form-item label="用户名">
-		            <el-input v-model="form.username"></el-input>
+		        <el-form-item label="类型">
+		            <el-input v-model="add_param.type"></el-input>
 		        </el-form-item>
-				<el-form-item label="密码">
-				    <el-input v-model="form.password"></el-input>
-				</el-form-item>
-				<el-form-item label="角色">
-				    <el-input v-model="form.role"></el-input>
-				</el-form-item>
-				<el-form-item label="班级">
-				    <el-input v-model="form.class"></el-input>
+				<el-form-item label="进程名">
+				    <el-input v-model="add_param.process"></el-input>
 				</el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="add_editVisible = false">取 消</el-button>
-		        <el-button type="primary" @click="saveEdit">确 定</el-button>
+		        <el-button type="primary" @click="addBlackList">确 定</el-button>
 		    </span>
 		</el-dialog>
-		
-		<!-- 批量导入弹出框 -->
-		<el-dialog title="批量添加" :visible.sync="add_batch" width="30%">
-		    <el-form ref="form" :model="form" label-width="70px">
-		        <el-upload
-					class="upload-demo"
-					drag
-					action="https://jsonplaceholder.typicode.com/posts/"
-					multiple>
-					<i class="el-icon-upload"></i>
-					<div class="el-upload__text">将Excel文件拖到此处，或<em>点击上传</em></div>
-		        </el-upload>
-		    </el-form>
-		    <span slot="footer" class="dialog-footer">
-		        <el-button @click="add_batch = false">取 消</el-button>
-		        <el-button type="primary" @click="saveEdit">确 定</el-button>
-		    </span>
-		</el-dialog>
-		
+			
     </div>
 </template>
 
 <script>
-import { getUserInfo } from '../../../api/index.js';
+import { getBlackListTypes } from '../../../api/index.js';
+import { selectBlackList, deleteBlackList, updateBlackList, insertBlackList } from '../../../api/BlackListAPI.js';
+import '../../../api/BlackListAPI.js';
 export default {
     name: 'user',
     data() {
         return {
             query: {
-                address: '',
-                name: '',
+                type: '',
                 pageIndex: 1,
                 pageSize: 10
             },
+            add_param: {
+                name: '',
+                type: '',
+                process: ''
+            },
             tableData: [],
-            multipleSelection: [],
-            delList: [],
+            idList: [],
             editVisible: false,
 			add_editVisible: false,
 			add_batch: false,
             pageTotal: 0,
             form: {},
             idx: -1,
-            id: -1
+            id: -1,
+            type_list: ''
         };
     },
     created() {
         this.getData();
+        getBlackListTypes().then(res=>{ this.type_list = res });
     },
     methods: {
 		showAddDlg() {
@@ -175,10 +150,10 @@ export default {
 		},
         // 获取 easy-mock 的模拟数据
         getData() {
-            getUserInfo(this.query).then(res => {
+            selectBlackList(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
+                this.pageTotal = res.pageTotal;
             });
         },
         // 触发搜索按钮
@@ -186,6 +161,13 @@ export default {
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
         },
+        addBlackList(){
+			insertBlackList(this.add_param).then(res=>{
+				this.getData();
+				this.add_editVisible = false;
+				this.$message.success('添加成功');
+			})
+		},
         // 删除操作
         handleDelete(index, row) {
             // 二次确认删除
@@ -193,24 +175,27 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    this.$message.success('删除成功');
-                    this.tableData.splice(index, 1);
+					deleteBlackList({ids: [row.id]}).then(res=>{
+						this.getData();
+						this.$message.success('删除成功');
+					})
                 })
-                .catch(() => {});
         },
         // 多选操作
         handleSelectionChange(val) {
-            this.multipleSelection = val;
+			this.idList = [];
+			for (var i=0;i<val.length;i++){
+				this.idList.push(val[i].id)
+			}
         },
         delAllSelection() {
-            const length = this.multipleSelection.length;
-            let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-            }
-            this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
+			if (this.idList.length>0){
+				deleteBlackList({ids: this.idList}).then(res=>{
+					this.$message.error(res.msg);
+					this.query.pageIndex = 1;
+					this.getData();
+				});
+			}
         },
         // 编辑操作
         handleEdit(index, row) {
@@ -221,8 +206,10 @@ export default {
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-            this.$set(this.tableData, this.idx, this.form);
+			updateBlackList(this.form).then(res=>{
+				this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+				this.getData();
+			})
         },
         // 分页导航
         handlePageChange(val) {

@@ -196,6 +196,16 @@ export default {
 				type: '',
 				key: ''
             },
+            add_param: {
+                chapterid: '',
+                type: '',
+                difficulty: '',
+                content: '',
+                option1: '',
+                option2: '',
+                option3: '',
+                option4: '',
+            },
             tableData: [],
             multipleSelection: [],
             delList: [],

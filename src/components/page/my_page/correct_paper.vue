@@ -30,13 +30,6 @@
 				<el-table-column prop="" label="班级" align="center"></el-table-column>
                 <el-table-column prop="course" label="课程" align="center"></el-table-column>
                 <el-table-column prop="time" label="考试时间" align="center"></el-table-column>
-				<el-table-column label="批改状态" align="center">
-					<template slot-scope="scope">
-					    <el-tag
-					        :type="scope.row.state==='已批改'?'success':(scope.row.state==='未批改'?'danger':'')"
-					    >{{scope.row.state}}</el-tag>
-					</template>
-				</el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
