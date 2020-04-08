@@ -49,7 +49,8 @@ export default {
 					login(this.param).then(res=>{
 						if (res.code === 200){
 							this.$message.success(res.msg);
-							localStorage.setItem('ms_username', res.data.name);
+                            localStorage.setItem('ms_username', res.data.name);
+                            localStorage.setItem('ms_role', res.data.role);
 							this.$router.push('/');
 						} else {
 							this.$message.error(res.msg);

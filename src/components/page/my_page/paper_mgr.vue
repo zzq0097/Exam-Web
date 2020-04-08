@@ -112,7 +112,7 @@
 		<!-- 详细信息弹出框 -->
 		<el-dialog title="详细信息" :visible.sync="detailInfo" width="60%">
 		    <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item v-for="item in test" :key="test.test_id">
+		        <el-form-item v-for="item in test" :key="item.test_id">
 		            <p>题目：{{ item.test_title }}</p>
 		        	<p>题目分数：{{ item.test_score }}分</p>
 		        </el-form-item>
@@ -126,8 +126,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-import { getPaper } from '../../../api/index';
+import { getPaper } from '../../../api/PaperAPI';
 import { getClassList } from '../../../api/index';
 import { getCourseList } from '../../../api/index';
 export default {

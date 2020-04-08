@@ -129,9 +129,10 @@
 <script>
 import { getCourseList } from '../../../api/index.js';
 import { getChapterList } from '../../../api/index.js';
-import { listChapter } from '../../../api/index.js';
-import { insertChapter } from '../../../api/index.js';
-import { updateChapter } from '../../../api/index.js';
+import { listChapter } from '../../../api/CourseAPI.js';
+import { insertChapter } from '../../../api/CourseAPI.js';
+import { updateChapter } from '../../../api/CourseAPI.js';
+import { deleteChapter } from '../../../api/CourseAPI.js';
 export default {
     name: 'course_info_mgr',
     data() {
@@ -141,7 +142,7 @@ export default {
 				chaptername: '',
 				index: '',
                 pageIndex: 1,
-                pageSize: 1000
+                pageSize: 10
             },
 			insert_param: {
 				courseid: '',
@@ -149,8 +150,7 @@ export default {
 				index: '',
 			},
             tableData: [],
-            multipleSelection: [],
-            delList: [],
+			idList: [],
             editVisible: false,
 			add_editVisible: false,
             pageTotal: 0,
@@ -174,7 +174,7 @@ export default {
             listChapter(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
+                this.pageTotal = res.pageTotal;
             });
         },
 		getCourseList(){
@@ -201,24 +201,28 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    this.$message.success('删除成功');
-                    this.tableData.splice(index, 1);
+                    deleteChapter().then(res=>{
+                        his.getData();
+                        this.$message.success('删除成功');
+                    })
                 })
                 .catch(() => {});
         },
         // 多选操作
         handleSelectionChange(val) {
-            this.multipleSelection = val;
+			this.idList = [];
+			for (var i=0;i<val.length;i++){
+				this.idList.push(val[i].id)
+			}
         },
         delAllSelection() {
-            const length = this.multipleSelection.length;
-            let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-            }
-            this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
+			if (this.idList.length>0){
+				deleteChapter({ids: this.idList}).then(res=>{
+					this.$message.error(res.msg);
+					this.query.pageIndex = 1;
+					this.getData();
+				});
+			}
         },
         // 编辑操作
         handleEdit(index, row) {

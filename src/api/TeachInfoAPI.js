@@ -1,17 +1,17 @@
 import request from '../utils/request';
 import qs from 'qs';
 
-// 班级管理
-export const selectClass = query => { 
+// 授课信息管理
+export const selectTeachInfo = query => { 
     return request({
-		url: '/selectClass',
+		url: '/selectTeachInfo',
         method: 'get',
         params: query
     });
 };
-export const deleteClass = query => {
+export const deleteTeachInfo = query => {
     return request({
-		url: '/deleteClass',
+		url: '/deleteTeachInfo',
         method: 'post',
         params: query,
 		paramsSerializer: params => {
@@ -19,16 +19,16 @@ export const deleteClass = query => {
 		}
     })
 };
-export const updateClass = query => {
+export const updateTeachInfo = query => {
     return request({
-		url: '/updateClass',
+		url: '/updateTeachInfo',
         method: 'put',
         params: query
     });
 };
-export const insertClass = query => {
+export const insertTeachInfo = query => {
     return request({
-		url: '/insertClass',
+		url: '/insertTeachInfo',
         method: 'post',
         params: query
     });

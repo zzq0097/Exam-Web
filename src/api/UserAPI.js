@@ -1,7 +1,7 @@
 import request from '../utils/request';
 import qs from 'qs';
 
-// ---------------------------------------- 用户管理
+// 用户管理
 export const getUserInfo = query => { 
     return request({
 		url: '/selectUser',

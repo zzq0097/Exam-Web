@@ -182,9 +182,9 @@
 </template>
 
 <script>
-import { getTestLib } from '../../../api/index.js';
-import { getCourseList } from '../../../api/index.js';
-import { getChapterList } from '../../../api/index.js';
+import { selectQuestion } from '../../../api/QuestionAPI';
+import { getCourseList } from '../../../api/index';
+import { getChapterList } from '../../../api/index';
 export default {
     name: 'test_mgr',
     data() {
@@ -209,8 +209,7 @@ export default {
                 option4: '',
             },
             tableData: [],
-            multipleSelection: [],
-            delList: [],
+            idList: [],
             editVisible: false,
 			add_editVisible: false,
 			add_batch: false,
@@ -224,7 +223,7 @@ export default {
     },
     created() {
         this.getData();
-		this.getCourseList();
+		getCourseList().then(res=>{this.course_list = res});
     },
     methods: {
 		showAddDlg() {
@@ -234,7 +233,7 @@ export default {
 			this.add_batch = true
 		},
         getData() {
-            getTestLib(this.query).then(res => {
+            selectQuestion(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
                 this.pageTotal = res.pageTotal;
@@ -245,12 +244,6 @@ export default {
 				}
             });
         },
-		getCourseList(){
-			getCourseList().then(res=>{
-				console.log(res);
-				this.course_list = res;
-			});
-		},
         // 触发搜索按钮
         handleSearch() {
 			this.query.courseid = '';
@@ -272,17 +265,19 @@ export default {
         },
         // 多选操作
         handleSelectionChange(val) {
-            this.multipleSelection = val;
+			this.idList = [];
+			for (var i=0;i<val.length;i++){
+				this.idList.push(val[i].id)
+			}
         },
         delAllSelection() {
-            const length = this.multipleSelection.length;
-            let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-            }
-            this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
+			if (this.idList.length>0){
+				deleteUser({ids: this.idList}).then(res=>{
+					this.$message.error(res.msg);
+					this.query.pageIndex = 1;
+					this.getData();
+				});
+			}
         },
         // 编辑操作
         handleEdit(index, row) {

@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { getTeachingInfo } from '../../../api/index.js';
+import { getTeachInfo } from '../../../api/TeachInfoAPI.js';
 import { getCourseList } from '../../../api/index.js';
 import { getClassList } from '../../../api/index.js';
 export default {

@@ -1,8 +1,8 @@
 import request from '../utils/request';
 
-export const login = query => {
+export const getPaperToCorrect = query => {
     return request({
-        url: './login_success.json',
+        url: '/getPaperToCorrect',
         method: 'get',
         params: query
     });

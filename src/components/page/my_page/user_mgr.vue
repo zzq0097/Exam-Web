@@ -169,11 +169,11 @@
 </template>
 
 <script>
-import { getUserInfo } from '../../../api/UserAPI.js';
-import { insertUser } from '../../../api/UserAPI.js';
-import { deleteUser } from '../../../api/UserAPI.js';
-import { updateUser } from '../../../api/UserAPI.js';
-import { getClassList } from '../../../api/index.js';
+import { getUserInfo } from '../../../api/UserAPI';
+import { insertUser } from '../../../api/UserAPI';
+import { deleteUser } from '../../../api/UserAPI';
+import { updateUser } from '../../../api/UserAPI';
+import { getClassList } from '../../../api/index';
 export default {
     name: 'user',
     data() {

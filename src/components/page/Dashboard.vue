@@ -223,7 +223,7 @@ export default {
     },
     computed: {
         role() {
-            return this.name === 'admin' ? '超级管理员' : '普通用户';
+            return localStorage.getItem('ms_role') === '1' ? '管理员' : '普通用户';
         }
     },
     // created() {

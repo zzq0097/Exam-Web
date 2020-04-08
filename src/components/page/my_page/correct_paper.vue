@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { getPaperToCorrect } from '../../../api/index.js';
+import { getPaperToCorrect } from '../../../api/ExamAPI.js';
 export default {
     name: 'user',
     data() {
