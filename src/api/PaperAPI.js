@@ -1,8 +1,33 @@
 import request from '../utils/request';
-
-export const getPaper = query => {
+import qs from 'qs';
+// 试卷管理
+export const selectPaper = query => {
     return request({
 		url: '/getPaperList',
+        method: 'get',
+        params: query
+    });
+};
+export const deletePaper = query => {
+    return request({
+		url: '/deletePaper',
+        method: 'post',
+        params: query,
+        paramsSerializer: params => {
+			return qs.stringify(params, { indices: false })
+		}
+    });
+};
+export const updatePaper = query => {
+    return request({
+		url: '/updatePaper',
+        method: 'get',
+        params: query
+    });
+};
+export const insertPaper = query => {
+    return request({
+		url: '/insertPaper',
         method: 'get',
         params: query
     });

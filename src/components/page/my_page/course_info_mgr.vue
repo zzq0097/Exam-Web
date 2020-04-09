@@ -183,12 +183,6 @@ export default {
 				this.course_list = res;
 			});
 		},
-		getChapterList(){
-			// getChapterList(this.query).then(res=>{
-			// 	console.log(res);
-			// 	this.chapter_list = res;
-			// });
-		},
         // 触发搜索按钮
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);

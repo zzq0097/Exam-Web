@@ -34,13 +34,7 @@
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" label="姓名"></el-table-column>
-                <el-table-column prop="username" label="用户名" align="center"></el-table-column>
-                <el-table-column prop="password" label="密码" align="center"></el-table-column>
-				<el-table-column prop="tel" label="电话" align="center"></el-table-column>
-                <el-table-column prop="role" label="角色" align="center"></el-table-column>
-				<el-table-column prop="class" label="班级" align="center"></el-table-column>
-                <el-table-column prop="insert_date" label="添加时间" align="center"></el-table-column>
+                <el-table-column prop="name" label="班级名称" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -67,7 +61,7 @@
                     @current-change="handlePageChange"
                 ></el-pagination>
             </div>
-		<el-button type="primary" @click="showAddDlg">添加用户</el-button>
+		<el-button type="primary" @click="showAddDlg">添加班级</el-button>
 		<el-button type="primary" @click="showAddsDlg">批量导入</el-button>
         </div>
 
@@ -77,18 +71,6 @@
 		        <el-form-item label="姓名">
 		            <el-input v-model="form.name"></el-input>
 		        </el-form-item>
-		        <el-form-item label="用户名">
-		            <el-input v-model="form.username"></el-input>
-		        </el-form-item>
-				<el-form-item label="密码">
-				    <el-input v-model="form.password"></el-input>
-				</el-form-item>
-				<el-form-item label="角色">
-				    <el-input v-model="form.role"></el-input>
-				</el-form-item>
-				<el-form-item label="班级">
-				    <el-input v-model="form.class"></el-input>
-				</el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -102,18 +84,6 @@
 		        <el-form-item label="姓名">
 		            <el-input v-model="form.name"></el-input>
 		        </el-form-item>
-		        <el-form-item label="用户名">
-		            <el-input v-model="form.username"></el-input>
-		        </el-form-item>
-				<el-form-item label="密码">
-				    <el-input v-model="form.password"></el-input>
-				</el-form-item>
-				<el-form-item label="角色">
-				    <el-input v-model="form.role"></el-input>
-				</el-form-item>
-				<el-form-item label="班级">
-				    <el-input v-model="form.class"></el-input>
-				</el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="add_editVisible = false">取 消</el-button>

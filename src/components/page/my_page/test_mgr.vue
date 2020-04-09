@@ -54,8 +54,8 @@
 				<el-table-column prop="options" label="选项"></el-table-column>
 				<el-table-column prop="answer" label="答案" width="55" align="center"></el-table-column>
 				<el-table-column prop="difficulty" label="难度" width="55" align="center"></el-table-column>
-                <el-table-column prop="coursename" label="所属课程" width="120" align="center"></el-table-column>
-                <el-table-column prop="chaptername" label="所属章节" width="70" align="center"></el-table-column>
+                <el-table-column prop="courseName" label="所属课程" width="120" align="center"></el-table-column>
+                <el-table-column prop="chapterName" label="所属章节" width="70" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -95,7 +95,7 @@
 				    		v-for="item in course_list"
 				    		:key="item.courseid"
 				    		:label="item.coursename"
-				    		:value="item.coursename">
+				    		:value="item.courseid">
 				    	</el-option>
 				    </el-select>
 				</el-form-item>
@@ -105,7 +105,7 @@
 				    		v-for="item in chapter_list"
 				    		:key="item.chaptereid"
 				    		:label="item.chaptername"
-				    		:value="item.chaptername">
+				    		:value="item.chapterid">
 				    	</el-option>
 				    </el-select>
 				</el-form-item>
@@ -155,34 +155,54 @@
 		<el-dialog title="添加用户" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 				<el-form-item label="所属课程">
-				    <el-input v-model="query.courseid"></el-input>
+				    <el-select v-model="add_param.courseid" @change="getChapterList">
+				    	<el-option
+				    		v-for="item in course_list"
+				    		:key="item.courseid"
+				    		:label="item.coursename"
+				    		:value="item.courseid">
+				    	</el-option>
+				    </el-select>
 				</el-form-item>
 				<el-form-item label="所属章节">
-				    <el-input v-model="query.courseid"></el-input>
+				    <el-select v-model="add_param.chapterid">
+				    	<el-option
+				    		v-for="item in chapter_list"
+				    		:key="item.chaptereid"
+				    		:label="item.chaptername"
+				    		:value="item.chapterid">
+				    	</el-option>
+				    </el-select>
 				</el-form-item>
 		        <el-form-item label="题目类型">
-		            <el-input v-model="form.type"></el-input>
+		            <el-select v-model="add_param.type">
+		            	<el-option label="选择" value="选择"></el-option>
+						<el-option label="判断" value="判断"></el-option>
+						<el-option label="填空" value="填空"></el-option>
+						<el-option label="简答" value="简答"></el-option>
+						<el-option label="编程" value="编程"></el-option>
+		            </el-select>
 		        </el-form-item>
 		        <el-form-item label="题目">
-		            <el-input v-model="form.title"></el-input>
+		            <el-input v-model="add_param.content"></el-input>
 		        </el-form-item>
 				<el-form-item label="选项">
-				    <el-input v-model="form.answer"></el-input>
+				    <el-input v-model="add_param.option1"></el-input>
 				</el-form-item>
 				<el-form-item label="答案">
-				    <el-input v-model="form.answer"></el-input>
+				    <el-input v-model="add_param.answer"></el-input>
 				</el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="add_editVisible = false">取 消</el-button>
-		        <el-button type="primary" @click="saveEdit">确 定</el-button>
+		        <el-button type="primary" @click="add_test">确 定</el-button>
 		    </span>
 		</el-dialog>
     </div>
 </template>
 
 <script>
-import { selectQuestion } from '../../../api/QuestionAPI';
+import { selectQuestion, insertQuestion } from '../../../api/QuestionAPI';
 import { getCourseList } from '../../../api/index';
 import { getChapterList } from '../../../api/index';
 export default {
@@ -199,6 +219,7 @@ export default {
                 pageSize: 10
             },
             add_param: {
+                courseid: '',
                 chapterid: '',
                 type: '',
                 difficulty: '',
@@ -207,6 +228,7 @@ export default {
                 option2: '',
                 option3: '',
                 option4: '',
+                answer: ''
             },
             tableData: [],
             idList: [],
@@ -243,6 +265,19 @@ export default {
 					})
 				}
             });
+        },
+        getChapterList(){
+			getChapterList({courseid :this.add_param.courseid}).then(res=>{
+                this.add_param.chapterid = '';
+				this.chapter_list = res;
+			});
+        },
+        add_test(){
+            insertQuestion(this.add_param).then(res=>{
+                this.getData(); 
+				this.add_editVisible = false;
+				this.$message.success('添加成功');
+            })
         },
         // 触发搜索按钮
         handleSearch() {

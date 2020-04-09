@@ -12,7 +12,7 @@ export const selectClass = query => {
 export const deleteClass = query => {
     return request({
 		url: '/deleteClass',
-        method: 'post',
+        method: 'get',
         params: query,
 		paramsSerializer: params => {
 			return qs.stringify(params, { indices: false })
@@ -22,7 +22,7 @@ export const deleteClass = query => {
 export const updateClass = query => {
     return request({
 		url: '/updateClass',
-        method: 'put',
+        method: 'post',
         params: query
     });
 };

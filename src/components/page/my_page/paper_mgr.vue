@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import { getPaper } from '../../../api/PaperAPI';
+import { selectPaper, deletePaper } from '../../../api/PaperAPI';
 import { getClassList } from '../../../api/index';
 import { getCourseList } from '../../../api/index';
 export default {
@@ -141,8 +141,7 @@ export default {
             },
 			test_list: [],
             tableData: [],
-            multipleSelection: [],
-            delList: [],
+			idList: [],
             editVisible: false,
 			add_editVisible: false,
 			detailInfo: false,
@@ -165,10 +164,10 @@ export default {
 		},
         // 获取 easy-mock 的模拟数据
         getData() {
-            getPaper(this.query).then(res => {
+            selectPaper(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
+                this.pageTotal = res.pageTotal;
             });
         },
 		getClassList() {
@@ -182,7 +181,7 @@ export default {
 				console.log(res);
 				this.course_list = res;
 			});
-		},
+        },
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
@@ -194,24 +193,28 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    this.$message.success('删除成功');
-                    this.tableData.splice(index, 1);
+					deletePaper({ids: [row.paperId]}).then(res=>{
+						this.getData();
+						this.$message.success('删除成功');
+					})
                 })
                 .catch(() => {});
         },
         // 多选操作
         handleSelectionChange(val) {
-            this.multipleSelection = val;
+			this.idList = [];
+			for (var i=0;i<val.length;i++){
+				this.idList.push(val[i].paperId)
+			}
         },
         delAllSelection() {
-            const length = this.multipleSelection.length;
-            let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-            }
-            this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
+			if (this.idList.length>0){
+				deletePaper({ids: this.idList}).then(res=>{
+					this.$message.error(res.msg);
+					this.query.pageIndex = 1;
+					this.getData();
+				});
+			}
         },
         // 编辑操作
         handleEdit(index, row) {
