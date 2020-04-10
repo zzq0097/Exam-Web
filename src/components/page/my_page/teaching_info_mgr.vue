@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { getTeachInfo } from '../../../api/TeachInfoAPI.js';
+import { selectTeachInfo, deleteTeachInfo } from '../../../api/TeachInfoAPI.js';
 import { getCourseList } from '../../../api/index.js';
 import { getClassList } from '../../../api/index.js';
 export default {
@@ -162,7 +162,7 @@ export default {
 		},
         // 获取 easy-mock 的模拟数据
         getData() {
-            getTeachingInfo(this.query).then(res => {
+            selectTeachInfo(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
                 this.pageTotal = res.pageTotal;
@@ -180,10 +180,13 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    this.$message.success('删除成功');
-                    this.tableData.splice(index, 1);
+					deleteTeachInfo({ids: [row.id]}).then(res=>{
+						this.getData();
+						this.$message.success('删除成功');
+					}).catch(()=>{
+                        this.$message.error('删除成功');
+                    })
                 })
-                .catch(() => {});
         },
         // 多选操作
         handleSelectionChange(val) {

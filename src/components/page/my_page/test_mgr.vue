@@ -202,7 +202,7 @@
 </template>
 
 <script>
-import { selectQuestion, insertQuestion } from '../../../api/QuestionAPI';
+import { selectQuestion, insertQuestion, deleteQuestion } from '../../../api/QuestionAPI';
 import { getCourseList } from '../../../api/index';
 import { getChapterList } from '../../../api/index';
 export default {
@@ -293,8 +293,12 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    this.$message.success('删除成功');
-                    this.tableData.splice(index, 1);
+                    deleteQuestion({ids: [row.subjectid]}).then(res=>{
+						this.getData();
+						this.$message.success('删除成功');
+					}).catch(()=>{
+                        this.$message.success('删除失败');
+                    })
                 })
                 .catch(() => {});
         },
@@ -302,12 +306,12 @@ export default {
         handleSelectionChange(val) {
 			this.idList = [];
 			for (var i=0;i<val.length;i++){
-				this.idList.push(val[i].id)
+				this.idList.push(val[i].subjectid)
 			}
         },
         delAllSelection() {
 			if (this.idList.length>0){
-				deleteUser({ids: this.idList}).then(res=>{
+				deleteQuestion({ids: this.idList}).then(res=>{
 					this.$message.error(res.msg);
 					this.query.pageIndex = 1;
 					this.getData();

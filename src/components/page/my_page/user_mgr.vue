@@ -249,7 +249,9 @@ export default {
 					deleteUser({ids: [row.id]}).then(res=>{
 						this.getData();
 						this.$message.success('删除成功');
-					})
+					}).catch(()=>{
+                        this.$message.error('删除成功');
+                    })
                 })
                 .catch(() => {});
         },

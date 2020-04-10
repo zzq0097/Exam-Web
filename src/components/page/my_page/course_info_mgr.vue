@@ -195,9 +195,11 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    deleteChapter().then(res=>{
-                        his.getData();
+                    deleteChapter({ids: [row.chapterid]}).then(res=>{
+                        this.getData();
                         this.$message.success('删除成功');
+                    }).catch(()=>{
+                        this.$message.error('删除失败');
                     })
                 })
                 .catch(() => {});
@@ -238,7 +240,7 @@ export default {
 				this.add_editVisible = false;
 				this.insert_param = '';
 				this.getData();
-			})
+			}) 
         },
         // 分页导航
         handlePageChange(val) {

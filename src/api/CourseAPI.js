@@ -26,7 +26,7 @@ export const updateChapter = query => {
 export const deleteChapter = query => {
 	return request({	
 		url: '/deleteChapter',
-		method: 'delete',
+		method: 'get',
         params: query,
         paramsSerializer: params => {
 			return qs.stringify(params, { indices: false })

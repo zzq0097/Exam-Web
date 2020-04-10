@@ -11,7 +11,7 @@ export const selectBlackList = query => {
 export const updateBlackList = query => {
     return request({
         url: '/updateBlackList',
-        method: 'get',
+        method: 'post',
         params: query
     });
 };
@@ -28,7 +28,7 @@ export const deleteBlackList = query => {
 export const insertBlackList = query => {
     return request({
         url: '/insertBlackList',
-        method: 'get',
+        method: 'post',
         params: query
     });
 };
