@@ -99,7 +99,7 @@
 		<el-dialog title="添加章节" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 		        <el-form-item label="课程">
-		            <el-select v-model="insert_param.courseid" placeholder="课程" @change="getChapterList">
+		            <el-select v-model="add_param.courseid" placeholder="课程" @change="getChapterList">
 		                <el-option
 		                	v-for="item in course_list"
 		                	:key="item.courseid"
@@ -109,12 +109,12 @@
 		            </el-select>
 		        </el-form-item>
 		        <el-form-item label="章节">
-		            <el-select v-model="insert_param.index" placeholder="章节" @change="getChapterList">
+		            <el-select v-model="add_param.index" placeholder="章节" @change="getChapterList">
 		                <el-option v-for="i in 15" :key="i" :label="i" :value="i"></el-option>
 		            </el-select>
 		        </el-form-item>
 				<el-form-item label="章节名">
-				    <el-input v-model="insert_param.chaptername"></el-input>
+				    <el-input v-model="add_param.chaptername"></el-input>
 				</el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
@@ -179,6 +179,12 @@ export default {
         },
 		getCourseList(){
 			getCourseList().then(res=>{
+				console.log(res);
+				this.course_list = res;
+			});
+        },
+        getChapterList(){
+			getChapterList({courseid: this.form.courseid}).then(res=>{
 				console.log(res);
 				this.course_list = res;
 			});
