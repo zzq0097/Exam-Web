@@ -15,7 +15,7 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.courseid" placeholder="课程" @change="getCourseList">
+                <el-select v-model="query.courseid" placeholder="课程">
                     <el-option
                     	v-for="item in course_list"
                     	:key="item.courseid"
@@ -23,7 +23,7 @@
                     	:value="item.courseid">
                     </el-option>
                 </el-select>
-                <el-select v-model="query.classid" placeholder="班级" @change="getClassList">
+                <el-select v-model="query.classid" placeholder="班级">
                     <el-option
                     	v-for="item in class_list"
                     	:key="item.classid"
@@ -81,7 +81,7 @@
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px">
 				<el-form-item label="课程">
-                    <el-select v-model="form.courseid" placeholder="课程" @change="getCourseList">
+                    <el-select v-model="form.courseid" placeholder="课程">
                         <el-option
                             v-for="item in course_list"
                             :key="item.courseid"
@@ -91,7 +91,7 @@
                     </el-select>
 				</el-form-item>
 				<el-form-item label="授课班级">
-				<el-select v-model="form.classid" placeholder="班级" @change="getClassList">
+				<el-select v-model="form.classid" placeholder="班级">
                     <el-option
                     	v-for="item in class_list"
                     	:key="item.classid"
@@ -114,7 +114,7 @@
 		<el-dialog title="添加授课信息" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 				<el-form-item label="课程">
-                    <el-select v-model="form.courseid" placeholder="课程" @change="getCourseList">
+                    <el-select v-model="form.courseid" placeholder="课程">
                         <el-option
                             v-for="item in course_list"
                             :key="item.courseid"
@@ -124,7 +124,7 @@
                     </el-select>
 				</el-form-item>
 				<el-form-item label="授课班级">
-				<el-select v-model="form.classid" placeholder="班级" @change="getClassList">
+				<el-select v-model="form.classid" placeholder="班级">
                     <el-option
                     	v-for="item in class_list"
                     	:key="item.classid"

@@ -240,12 +240,13 @@ export default {
             idx: -1,
             id: -1,
 			course_list: '',
-			chapter_list: ''
+            chapter_list: ''
         };
     },
     created() {
         this.getData();
-		getCourseList().then(res=>{this.course_list = res});
+        getCourseList().then(res=>{this.course_list = res});
+        
     },
     methods: {
 		showAddDlg() {

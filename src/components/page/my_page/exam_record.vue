@@ -9,11 +9,23 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-select v-model="query.address" placeholder="搜索条件" class="handle-select mr10">
-                    <el-option key="1" label="课程" value="课程"></el-option>
-                    <el-option key="2" label="班级" value="班级"></el-option>
+                <el-select v-model="query.courseid" placeholder="课程" class="handle-select mr10">
+                    <el-option
+                    	v-for="item in course_list"
+                    	:key="item.courseid"
+                    	:label="item.coursename"
+                    	:value="item.courseid">
+                    </el-option>
                 </el-select>
-                <el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
+                <el-select v-model="query.classid" placeholder="班级" class="handle-select mr10">
+                    <el-option
+                    	v-for="item in class_list"
+                    	:key="item.classid"
+                    	:label="item.classname"
+                    	:value="item.classid">
+                    </el-option>
+                </el-select>
+                <el-input v-model="query.name" placeholder="学生姓名" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
             </div>
             <el-table
@@ -24,11 +36,10 @@
                 header-cell-class-name="table-header"
                 @selection-change="handleSelectionChange"
             >
-                <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="student" label="学生姓名" align="center"></el-table-column>
-				<el-table-column prop="" label="班级"z align="center"></el-table-column>
-                <el-table-column prop="course" label="课程" align="center"></el-table-column>
+				<el-table-column prop="classname" label="班级" align="center"></el-table-column>
+                <el-table-column prop="coursename" label="课程" align="center"></el-table-column>
                 <el-table-column prop="time" label="考试时间" align="center"></el-table-column>
 				<el-table-column label="批改状态" align="center">
 					<template slot-scope="scope">
@@ -67,7 +78,7 @@
         <!-- 编辑弹出框 -->
         <el-dialog title="批改" :visible.sync="editVisible" width="80%">
             <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item v-for="item in form.test" :key="form.test.test_id">
+		        <el-form-item v-for="item in form.test" :key="item.id">
 		            <p>题目：{{ item.test_title }}</p>
 					<p>答案：{{ item.stu_answer }}</p>
 					<p>题目分数：{{ item.test_score }}分</p>
@@ -83,69 +94,44 @@
 </template>
 
 <script>
-import { getPaperToCorrect } from '../../../api/ExamAPI.js';
+import { getRecordList } from '../../../api/RecordAPI.js';
+import { getCourseList, getClassList } from '../../../api/index.js';
 export default {
     name: 'user',
     data() {
         return {
             query: {
-                address: '',
-                name: '',
                 pageIndex: 1,
                 pageSize: 10
             },
             tableData: [],
-            multipleSelection: [],
-            delList: [],
             editVisible: false,
             pageTotal: 0,
             form: {},
             idx: -1,
-            id: -1
+            id: -1,
+            course_list: '',
+            class_list: ''
         };
     },
     created() {
         this.getData();
+        getCourseList().then(res=>{ this.course_list = res });
+        getClassList().then(res=>{ this.class_list = res });
     },
     methods: {
         // 获取 easy-mock 的模拟数据
         getData() {
-            getPaperToCorrect(this.query).then(res => {
+            getRecordList(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
+                this.pageTotal = res.pageTotal;
             });
         },
         // 触发搜索按钮
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
-        },
-        // 删除操作
-        handleDelete(index, row) {
-            // 二次确认删除
-            this.$confirm('确定要删除吗？', '提示', {
-                type: 'warning'
-            })
-                .then(() => {
-                    this.$message.success('删除成功');
-                    this.tableData.splice(index, 1);
-                })
-                .catch(() => {});
-        },
-        // 多选操作
-        handleSelectionChange(val) {
-            this.multipleSelection = val;
-        },
-        delAllSelection() {
-            const length = this.multipleSelection.length;
-            let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-            }
-            this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
         },
         // 编辑操作
         handleEdit(index, row) {

@@ -37,7 +37,13 @@
                 <el-table-column prop="username" label="用户名" align="center"></el-table-column>
                 <el-table-column prop="password" label="密码" align="center"></el-table-column>
 				<el-table-column prop="tel" label="电话" align="center"></el-table-column>
-                <el-table-column prop="role" label="角色" align="center"></el-table-column>
+                <el-table-column label="角色" align="center">
+                    <template slot-scope="scope">
+                        <a v-if="scope.row.role==='1'">管理员</a>
+                        <a v-else-if="scope.row.role==='2'">教师</a>
+                        <a v-else-if="scope.row.role==='3'">学生</a>
+                    </template>
+                </el-table-column>
 				<el-table-column prop="classname" label="班级" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">

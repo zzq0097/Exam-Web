@@ -32,3 +32,10 @@ export const insertPaper = query => {
         params: query
     });
 };
+export const getTestList = query => {
+    return request({
+		url: '/getTestList',
+        method: 'get',
+        params: query
+    });
+};

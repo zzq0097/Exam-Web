@@ -15,7 +15,7 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-input v-model="query.name" placeholder="班级名称" class="handle-input mr10"></el-input>
+                <el-input v-model="query.classname" placeholder="班级名称" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
             </div>
             <el-table
@@ -62,7 +62,7 @@
         <!-- 编辑弹出框 -->
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item label="姓名">
+		        <el-form-item label="班级名称">
 		            <el-input v-model="form.classname"></el-input>
 		        </el-form-item>
             </el-form>

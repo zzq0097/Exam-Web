@@ -23,14 +23,6 @@
                     	:value="item.courseid">
                     </el-option>
                 </el-select>
-				<el-select v-model="query.classid" placeholder="班级" @change="getData">
-				    <el-option
-				    	v-for="item in class_list"
-				    	:key="item.classid"
-				    	:label="item.classname"
-				    	:value="item.classid">
-				    </el-option>
-				</el-select>
             </div>
             <el-table
                 :data="tableData"
@@ -42,7 +34,12 @@
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="paperId" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="pattern" label="考试模式" width="100" align="center"></el-table-column>
+                <el-table-column label="考试模式" width="100" align="center">
+                    <template slot-scope="scope">
+                        <a v-if="scope.row.pattern===1">限通信模式</a>
+                        <a v-else-if="scope.row.pattern===2">霸屏模式</a>
+                    </template>
+                </el-table-column>
 				<el-table-column prop="isMonitor" label="是否开启监控" width="120" align="center"></el-table-column>
 				<el-table-column prop="startTime" label="考试开始时间" align="center"></el-table-column>
 				<el-table-column prop="finishTime" label="考试结束时间" align="center"></el-table-column>
@@ -85,20 +82,26 @@
         <el-dialog title="编辑" :visible.sync="editVisible" width="40%">
             <el-form ref="form" :model="form" label-width="100px">
 				<el-form-item label="考试课程">
-				    <el-select v-model="query.courseid" placeholder="课程" disabled class="handle-select mr10">
+				    <el-select v-model="form.courseid" placeholder="课程" disabled class="handle-select mr10">
 				        <el-option
 				        	v-for="item in course_list"
 				        	:key="item.courseid"
 				        	:label="item.coursename"
 				        	:value="item.courseid">
-				        </el-option>
+				        </el-option>om
 				    </el-select>
 				</el-form-item>
                 <el-form-item label="考试模式">
-                    <el-input v-model="form.pattern"></el-input>
+                    <el-select v-model="form.pattern" placeholder="模式" class="handle-select mr10">
+				        <el-option value="1" label="限通信模式"></el-option>
+                        <el-option value="2" label="霸屏模式"></el-option>
+				    </el-select>
                 </el-form-item>
                 <el-form-item label="是否开启监控">
-                    <el-input v-model="form.monitor"></el-input>
+                    <el-select v-model="form.isMonitor" placeholder="是/否" class="handle-select mr10">
+				        <el-option value="1" label="开启"></el-option>
+                        <el-option value="2" label="关闭"></el-option>
+				    </el-select>
                 </el-form-item>
 				<el-form-item label="考试开始时间">
 				    <el-input v-model="form.start_time"></el-input>
@@ -112,7 +115,7 @@
 		<!-- 详细信息弹出框 -->
 		<el-dialog title="详细信息" :visible.sync="detailInfo" width="60%">
 		    <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item v-for="item in test" :key="item.test_id">
+		        <el-form-item v-for="item in test_list" :key="item.test_id">
 		            <p>题目：{{ item.test_title }}</p>
 		        	<p>题目分数：{{ item.test_score }}分</p>
 		        </el-form-item>
@@ -149,13 +152,11 @@ export default {
             form: {},
             idx: -1,
             id: -1,
-			class_list: '',
 			course_list: ''
         };
     },
     created() {
         this.getData();
-		this.getClassList();
 		this.getCourseList();
     },
     methods: {
@@ -170,17 +171,16 @@ export default {
                 this.pageTotal = res.pageTotal;
             });
         },
-		getClassList() {
-			getClassList().then(res=>{
-				console.log(res);
-				this.class_list = res
-			})
-		},
 		getCourseList(){
 			getCourseList().then(res=>{
 				console.log(res);
 				this.course_list = res;
 			});
+        },
+        getTestList(){
+            getTestList().then(res=>{
+                this.test_list = res
+            })
         },
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
