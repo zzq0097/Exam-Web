@@ -3,7 +3,7 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 用户管理
+                    <i class="el-icon-lx-cascades"></i> 班级管理
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
@@ -15,13 +15,7 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.address" placeholder="角色" class="handle-select mr10">
-                    <el-option key="1" label="教师" value="教师"></el-option>
-                    <el-option key="2" label="学生" value="学生"></el-option>
-					<el-option key="3" label="班级" value="班级"></el-option>
-					<el-option key="4" label="管理员" value="管理员"></el-option>
-                </el-select>
-                <el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
+                <el-input v-model="query.name" placeholder="班级名称" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
             </div>
             <el-table
@@ -33,8 +27,8 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" label="班级名称" align="center"></el-table-column>
+                <el-table-column prop="classid" la bel="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="classname" label="班级名称" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -69,7 +63,7 @@
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px">
 		        <el-form-item label="姓名">
-		            <el-input v-model="form.name"></el-input>
+		            <el-input v-model="form.classname"></el-input>
 		        </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -79,15 +73,15 @@
         </el-dialog>
 		
 		<!-- 添加弹出框 -->
-		<el-dialog title="添加用户" :visible.sync="add_editVisible" width="30%">
+		<el-dialog title="添加班级" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item label="姓名">
-		            <el-input v-model="form.name"></el-input>
+		        <el-form-item label="班级名称">
+		            <el-input v-model="add_param.classname"></el-input>
 		        </el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="add_editVisible = false">取 消</el-button>
-		        <el-button type="primary" @click="saveEdit">确 定</el-button>
+		        <el-button type="primary" @click="addClass">确 定</el-button>
 		    </span>
 		</el-dialog>
 		
@@ -113,20 +107,21 @@
 </template>
 
 <script>
-import { getUserInfo } from '../../../api/UserAPI.js';
+import { selectClass, deleteClass, insertClass, updateClass } from '../../../api/ClassAPI.js';
 export default {
     name: 'user',
     data() {
         return {
             query: {
-                address: '',
-                name: '',
+                classname: '',
                 pageIndex: 1,
                 pageSize: 10
             },
+            add_param: {
+                classname: ''
+            },
             tableData: [],
-            multipleSelection: [],
-            delList: [],
+            idList: [],
             editVisible: false,
 			add_editVisible: false,
 			add_batch: false,
@@ -148,12 +143,19 @@ export default {
 		},
         // 获取 easy-mock 的模拟数据
         getData() {
-            getUserInfo(this.query).then(res => {
+            selectClass(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
+                this.pageTotal = res.pageTotal;
             });
         },
+        addClass(){
+			insertClass(this.add_param).then(res=>{
+				this.getData();
+				this.add_editVisible = false;
+				this.$message.success('添加成功');
+			})
+		},
         // 触发搜索按钮
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
@@ -166,24 +168,30 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    this.$message.success('删除成功');
-                    this.tableData.splice(index, 1);
+					deleteClass({ids: [row.classid]}).then(res=>{
+						this.getData();
+						this.$message.success('删除成功');
+					}).catch(()=>{
+                        this.$message.error('删除失败');
+                    })
                 })
                 .catch(() => {});
         },
         // 多选操作
         handleSelectionChange(val) {
-            this.multipleSelection = val;
+			this.idList = [];
+			for (var i=0;i<val.length;i++){
+				this.idList.push(val[i].classid)
+			}
         },
         delAllSelection() {
-            const length = this.multipleSelection.length;
-            let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-            }
-            this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
+			if (this.idList.length>0){
+				deleteClass({ids: this.idList}).then(res=>{
+					this.$message.error(res.msg);
+					this.query.pageIndex = 1;
+					this.getData();
+				});
+			}
         },
         // 编辑操作
         handleEdit(index, row) {
@@ -194,8 +202,10 @@ export default {
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-            this.$set(this.tableData, this.idx, this.form);
+			updateClass(this.form).then(res=>{
+				this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+				this.getData();
+			})
         },
         // 分页导航
         handlePageChange(val) {

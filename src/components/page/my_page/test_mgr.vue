@@ -268,7 +268,6 @@ export default {
         },
         getChapterList(){
 			getChapterList({courseid :this.add_param.courseid}).then(res=>{
-                this.add_param.chapterid = '';
 				this.chapter_list = res;
 			});
         },

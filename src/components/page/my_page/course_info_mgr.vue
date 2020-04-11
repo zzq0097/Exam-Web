@@ -139,14 +139,14 @@ export default {
         return {
             query: {
                 courseid: '',
-				chaptername: '',
+				chapterid: '',
 				index: '',
                 pageIndex: 1,
                 pageSize: 10
             },
-			insert_param: {
+			add_param: {
 				courseid: '',
-				chaptername: '',
+				chapterid: '',
 				index: '',
 			},
             tableData: [],

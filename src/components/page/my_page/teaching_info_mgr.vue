@@ -44,9 +44,9 @@
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="teacher" label="教师姓名" align="center"></el-table-column>
-				<el-table-column prop="class" label="授课班级" align="center"></el-table-column>
-				<el-table-column prop="course" label="课程" align="center"></el-table-column>
+                <el-table-column prop="teachername" label="教师姓名" align="center"></el-table-column>
+				<el-table-column prop="classname" label="授课班级" align="center"></el-table-column>
+				<el-table-column prop="coursename" label="课程" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -81,17 +81,28 @@
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px">
 				<el-form-item label="课程">
-				    <el-input v-model="form.course"></el-input>
+                    <el-select v-model="form.courseid" placeholder="课程" @change="getCourseList">
+                        <el-option
+                            v-for="item in course_list"
+                            :key="item.courseid"
+                            :label="item.coursename"
+                            :value="item.courseid">
+                        </el-option>
+                    </el-select>
 				</el-form-item>
-		        <el-form-item label="教师姓名">
+				<el-form-item label="授课班级">
+				<el-select v-model="form.classid" placeholder="班级" @change="getClassList">
+                    <el-option
+                    	v-for="item in class_list"
+                    	:key="item.classid"
+                    	:label="item.classname"
+                    	:value="item.classid">
+                    </el-option>
+                </el-select>
+				</el-form-item>
+                <el-form-item label="教师姓名">
 		            <el-input v-model="form.teacher"></el-input>
 		        </el-form-item>
-				<el-form-item label="授课学期">
-				    <el-input v-model="form.teach_time"></el-input>
-				</el-form-item>
-				<el-form-item label="班级">
-				    <el-input v-model="form.class"></el-input>
-				</el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -103,17 +114,28 @@
 		<el-dialog title="添加授课信息" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 				<el-form-item label="课程">
-				    <el-input v-model="form.course"></el-input>
+                    <el-select v-model="form.courseid" placeholder="课程" @change="getCourseList">
+                        <el-option
+                            v-for="item in course_list"
+                            :key="item.courseid"
+                            :label="item.coursename"
+                            :value="item.courseid">
+                        </el-option>
+                    </el-select>
 				</el-form-item>
-		        <el-form-item label="教师姓名">
+				<el-form-item label="授课班级">
+				<el-select v-model="form.classid" placeholder="班级" @change="getClassList">
+                    <el-option
+                    	v-for="item in class_list"
+                    	:key="item.classid"
+                    	:label="item.classname"
+                    	:value="item.classid">
+                    </el-option>
+                </el-select>
+				</el-form-item>
+                <el-form-item label="教师姓名">
 		            <el-input v-model="form.teacher"></el-input>
 		        </el-form-item>
-				<el-form-item label="授课学期">
-				    <el-input v-model="form.teach_time"></el-input>
-				</el-form-item>
-				<el-form-item label="班级">
-				    <el-input v-model="form.class"></el-input>
-				</el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="add_editVisible = false">取 消</el-button>
@@ -138,6 +160,11 @@ export default {
                 name: '',
                 pageIndex: 1,
                 pageSize: 10
+            },
+            add_param: {
+                courseid: '',
+                classid: '',
+                teacherid: ''
             },
             tableData: [],
 			idList: [],
