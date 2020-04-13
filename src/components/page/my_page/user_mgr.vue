@@ -44,7 +44,12 @@
                         <a v-else-if="scope.row.role==='3'">学生</a>
                     </template>
                 </el-table-column>
-				<el-table-column prop="classname" label="班级" align="center"></el-table-column>
+				<el-table-column label="班级" align="center">
+                    <template slot-scope="scope">
+                        <a v-if="scope.row.role==='3'">{{ scope.row.classname }}</a>
+                        <a v-else>/</a>
+                    </template>
+                </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button

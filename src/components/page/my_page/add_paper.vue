@@ -23,21 +23,21 @@
 					</el-form-item>
                     <el-form-item label="考试模式">
                         <el-radio-group v-model="form.pattern">
-                            <el-radio label="限通信模式"></el-radio>
-                            <el-radio label="霸屏模式"></el-radio>
+                            <el-radio label="1">限通信模式</el-radio>
+                            <el-radio label="2">霸屏模式</el-radio>
                         </el-radio-group>
                     </el-form-item>
 					<el-form-item label="监控">
-                        <el-radio-group v-model="form.monitor">
-                            <el-radio label="开启"></el-radio>
-                            <el-radio label="关闭"></el-radio>
+                        <el-radio-group v-model="form.ismonitor">
+                            <el-radio label="1">开启</el-radio>
+                            <el-radio label="2">关闭</el-radio>
                         </el-radio-group>
                     </el-form-item>
 					<el-form-item label="组卷方式">
-					    <el-radio-group v-model="create_type" @change="createType">
-					        <el-radio label="全随机组卷"></el-radio>
-					        <el-radio label="按章节/难度随机组卷"></el-radio>
-							<el-radio label="手动组卷"></el-radio>
+					    <el-radio-group v-model="form.mode" @change="createType">
+					        <el-radio label="1">全随机组卷</el-radio>
+					        <el-radio label="2">按章节/难度随机组卷</el-radio>
+							<el-radio label="3">手动组卷</el-radio>
 					    </el-radio-group>
 					</el-form-item>
 					<el-form-item>
@@ -86,43 +86,21 @@
 							</template>
 						</div>
 					</el-form-item>
-                    <el-form-item label="开始时间">
-                        <el-col :span="11">
-                            <el-date-picker
-                                type="date"
-                                placeholder="选择日期"
-                                v-model="form.start_date1"
-                                value-format="yyyy-MM-dd"
-                                style="width: 100%;"
-                            ></el-date-picker>
-                        </el-col>
-                        <el-col class="line" :span="2">-</el-col>
-                        <el-col :span="11">
-                            <el-time-select
-                                placeholder="选择时间"
-                                v-model="form.end_date1"
-                                style="width: 100%;"
-                            ></el-time-select>
-                        </el-col>
-                    </el-form-item>
+					<el-form-item label="开始时间">
+						<el-date-picker
+							v-model="form.starttime"
+							type="datetime"
+							value-format="yyyy-MM-dd HH:mm:ss"
+							placeholder="选择日期时间">
+						</el-date-picker>
+					</el-form-item>
 					<el-form-item label="结束时间">
-					    <el-col :span="11">
-					        <el-date-picker
-					            type="date"
-					            placeholder="选择日期"
-					            v-model="form.start_date2"
-					            value-format="yyyy-MM-dd"
-					            style="width: 100%;"
-					        ></el-date-picker>
-					    </el-col>
-					    <el-col class="line" :span="2">-</el-col>
-					    <el-col :span="11">
-					        <el-time-select
-					            placeholder="选择时间"
-					            v-model="form.end_date2"
-					            style="width: 100%;"
-					        ></el-time-select>
-					    </el-col>
+						<el-date-picker
+							v-model="form.finishtime"
+							type="datetime"
+							value-format="yyyy-MM-dd HH:mm:ss"
+							placeholder="选择日期时间">
+						</el-date-picker>
 					</el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="onSubmit">确定添加</el-button>
@@ -181,6 +159,7 @@
 
 <script>
 import { getCourseList } from '../../../api/index';
+import { updatePaper, insertPaper } from '../../../api/PaperAPI';
 export default {
     name: 'add_paper',
     data() {
@@ -211,15 +190,19 @@ export default {
 				difficulty: 2
 			}],
             form: {
-                name: '',
-                region: '',
-                start_date1: '',
-                start_date2: '',
-				end_date1: '',
-				end_date2: '',
+                mode: '',
+                starttime: '',
+                finishtime: '',
 				pattern: '',
-				monitor: '',
-                options: []
+				ismonitor: '',
+				// strategyDTOS:[{
+				// 	type: '',
+				// 	count: '',
+				// 	score: '',
+				// 	chapterid: '',
+				// 	difficulty: ''
+				// }],
+                questionids: []
 			},
 			course_list: ''
         };
@@ -229,7 +212,9 @@ export default {
 	},
     methods: {
         onSubmit() {
-            this.$message.success('提交成功！');
+			insertPaper(this.form).then(res=>{
+				this.$message.success('提交成功！');
+			})
         },
 		add_test() {
 			this.editVisible = true

@@ -27,7 +27,7 @@ export const updatePaper = query => {
 };
 export const insertPaper = query => {
     return request({
-		url: '/insertPaper',
+		url: '/formPaper',
         method: 'post',
         params: query
     });
