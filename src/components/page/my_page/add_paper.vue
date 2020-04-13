@@ -179,7 +179,6 @@ export default {
 			value: [1, 4],
 			data: '',
 			datas: generateData(),
-			create_type: '',
 			box2: false,
 			box3: false,
 			tableData: [{
@@ -220,13 +219,13 @@ export default {
 			this.editVisible = true
 		},
 		createType() {
-			if (this.create_type === "全随机组卷") {
+			if (this.form.mode === '1') {
 				this.box2 = false;
 				this.box3 = false;
-			} else if (this.create_type === "按章节/难度随机组卷"){
+			} else if (this.form.mode === '2'){
 				this.box2 = true;
 				this.box3 = false;
-			} else if (this.create_type === "手动组卷"){
+			} else if (this.form.mode === '3'){
 				this.box2 = false;
 				this.box3 = true;
 			}

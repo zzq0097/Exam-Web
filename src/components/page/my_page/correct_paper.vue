@@ -64,18 +64,42 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog title="批改" :visible.sync="editVisible" width="80%">
-            <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item v-for="item in form.test" :key="item.test_id">
-		            <p>题目：{{ item.test_title }}</p>
-					<p>答案：{{ item.stu_answer }}</p>
-					<p>题目分数：{{ item.test_score }}分</p>
-					得分<el-input min></el-input>
-		        </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
-            </span>
+            <hr/>
+		    <el-form ref="form" :model="form" v-for="item in test_list" :key="item.test_id" label-width="90px">
+		        <el-form-item label="题目：">
+                    <el-tag>{{item.type}}</el-tag>
+                    {{ item.content }}
+                </el-form-item>
+                <template v-if="item.type === '选择'">
+                    <el-form-item label="选项A："> {{ item.option1 }} </el-form-item>
+                    <el-form-item label="选项B："> {{ item.option2 }} </el-form-item>
+                    <el-form-item label="选项C："> {{ item.option3 }} </el-form-item>
+                    <el-form-item label="选项D："> {{ item.option4 }} </el-form-item>
+                </template>
+                <el-form-item label="考生答案："> {{ item.stuAnswer }} </el-form-item>
+                <el-form-item label="题目分值："> {{ item.score }} </el-form-item>
+                <template v-if="item.type === '选择'">
+                    <el-form-item label="学生得分：">
+                    <el-col :span="6">
+                        <template v-if="item.stuAnswer === item.answer">
+                            <el-input placeholder="请输入得分" disabled v-model="stu_score[i]"></el-input>
+                        </template>
+                    </el-col>
+                </el-form-item>
+                </template>
+                <template v-else>
+                    <el-form-item label="学生得分：">
+                        <el-col :span="6">
+                            <el-input placeholder="请输入得分" v-model="stu_score[i]"></el-input>
+                        </el-col>
+                    </el-form-item>
+                </template>
+                <hr/>
+		    </el-form>
+		    <span slot="footer" class="dialog-footer">
+		        <el-button @click="detailInfo = false">取 消</el-button>
+		        <el-button type="primary" @click="saveEdit">确 定</el-button>
+		    </span>
         </el-dialog>
     </div>
 </template>
@@ -83,6 +107,7 @@
 <script>
 import { getRecordList, getTestsByRecordId } from '../../../api/RecordAPI.js';
 import { getCourseList, getClassList } from '../../../api/index.js';
+import { submitScore } from '../../../api/ExamAPI.js';
 export default {
     name: 'user',
     data() {
@@ -90,19 +115,22 @@ export default {
             query: {
                 courseid: '',
                 classid: '',
+                status: '未批改',
                 name: '',
                 pageIndex: 1,
                 pageSize: 10
             },
             tableData: [],
-            test_list: '',
             editVisible: false,
             pageTotal: 0,
             form: {},
             idx: -1,
             id: -1,
             course_list: '',
-            class_list: ''
+            class_list: '',
+            test_list: '',
+            i: '',
+            stu_score: []
         };
     },
     created() {
@@ -126,6 +154,9 @@ export default {
         },
         // 编辑操作
         handleEdit(index, row) {
+            getTestsByRecordId({recordid: row.recordId}).then(res=>{
+                this.test_list = res.data
+            })
             this.idx = index;
             this.form = row;
             this.editVisible = true;
@@ -133,8 +164,10 @@ export default {
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-            this.$set(this.tableData, this.idx, this.form);
+            submitScore({score: this.stu_scors}).then(res=>{
+                this.$message.success('批改提交成功');
+            })
+            
         },
         // 分页导航
         handlePageChange(val) {

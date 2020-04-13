@@ -7,3 +7,11 @@ export const getPaperToCorrect = query => {
         params: query
     });
 };
+
+export const submitScore = query => {
+    return request({
+        url: '/qqqq',
+        method: 'get',
+        params: query
+    });
+};

@@ -78,7 +78,10 @@
         <el-dialog title="查看记录" :visible.sync="editVisible" width="80%">
             <hr/>
             <el-form ref="form" :model="form" v-for="item in this.test_list" :key="item.id" label-width="90px">
-		        <el-form-item label="题目："> {{ item.content }} </el-form-item>
+		        <el-form-item label="题目：">
+                    <el-tag>{{item.type}}</el-tag>
+                    {{ item.content }}
+                </el-form-item>
                 <template v-if="item.type === '选择'">
                     <el-form-item label="选项A："> {{ item.option1 }} </el-form-item>
                     <el-form-item label="选项B："> {{ item.option2 }} </el-form-item>
@@ -87,7 +90,7 @@
                 </template>
                 <el-form-item label="分值："> {{ item.score }} </el-form-item>
                 <el-form-item label="得分："> {{ item.stuScore }} </el-form-item>
-                <el-form-item label="参考答案："> {{ item.answer }} </el-form-item>
+                <el-form-item v-if="item.type==='选择'" label="参考答案："> {{ item.answer }} </el-form-item>
                 <el-form-item label="学生答案："> {{ item.stuAnswer }} </el-form-item>
                 <hr/>
             </el-form>
@@ -121,7 +124,8 @@ export default {
             id: -1,
             course_list: '',
             class_list: '',
-            test_list: ''
+            test_list: '',
+            stu_scors: []
         };
     },
     created() {
