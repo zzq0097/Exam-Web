@@ -12,13 +12,14 @@
             <div class="form-box">
                 <el-form ref="form" :model="form" label-width="80px" style="width: 700px;">
 					<el-form-item label="课程">
-					    <el-select v-model="data">
-					    	<el-option label="C++"></el-option>
-					    	<el-option label="Java"></el-option>
-					    	<el-option label="Python"></el-option>
-					    	<el-option label="C#"></el-option>
-					    	<el-option label="Vue.js"></el-option>
-					    </el-select>
+						<el-select v-model="form.courseid" placeholder="课程" class="handle-select mr10">
+							<el-option
+								v-for="item in course_list"
+								:key="item.courseid"
+								:label="item.coursename"
+								:value="item.courseid">
+							</el-option>
+						</el-select>
 					</el-form-item>
                     <el-form-item label="考试模式">
                         <el-radio-group v-model="form.pattern">
@@ -26,10 +27,12 @@
                             <el-radio label="霸屏模式"></el-radio>
                         </el-radio-group>
                     </el-form-item>
-					<el-form-item label="开启监控">
-					    <el-switch v-model="form.monitor"></el-switch>
-					</el-form-item>
-					
+					<el-form-item label="监控">
+                        <el-radio-group v-model="form.monitor">
+                            <el-radio label="开启"></el-radio>
+                            <el-radio label="关闭"></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
 					<el-form-item label="组卷方式">
 					    <el-radio-group v-model="create_type" @change="createType">
 					        <el-radio label="全随机组卷"></el-radio>
@@ -177,6 +180,7 @@
 </template>
 
 <script>
+import { getCourseList } from '../../../api/index';
 export default {
     name: 'add_paper',
     data() {
@@ -206,58 +210,6 @@ export default {
 				chapter: '第二章',
 				difficulty: 2
 			}],
-            options: [
-                {
-                    value: 'guangdong',
-                    label: '广东省',
-                    children: [
-                        {
-                            value: 'guangzhou',
-                            label: '广州市',
-                            children: [
-                                {
-                                    value: 'tianhe',
-                                    label: '天河区'
-                                },
-                                {
-                                    value: 'haizhu',
-                                    label: '海珠区'
-                                }
-                            ]
-                        },
-                        {
-                            value: 'dongguan',
-                            label: '东莞市',
-                            children: [
-                                {
-                                    value: 'changan',
-                                    label: '长安镇'
-                                },
-                                {
-                                    value: 'humen',
-                                    label: '虎门镇'
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    value: 'hunan',
-                    label: '湖南省',
-                    children: [
-                        {
-                            value: 'changsha',
-                            label: '长沙市',
-                            children: [
-                                {
-                                    value: 'yuelu',
-                                    label: '岳麓区'
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ],
             form: {
                 name: '',
                 region: '',
@@ -268,9 +220,13 @@ export default {
 				pattern: '',
 				monitor: '',
                 options: []
-            }
+			},
+			course_list: ''
         };
-    },
+	},
+	created() {
+		getCourseList().then(res=>{this.course_list = res;});
+	},
     methods: {
         onSubmit() {
             this.$message.success('提交成功！');
@@ -289,7 +245,44 @@ export default {
 				this.box2 = false;
 				this.box3 = true;
 			}
-		}
+		},
+		handleSearch() {
+            this.$set(this.query, 'pageIndex', 1);
+            this.getData();
+        },
+        // 删除操作
+        handleDelete(index, row) {
+            // 二次确认删除
+            this.$confirm('确定要删除吗？', '提示', {
+                type: 'warning'
+            })
+                .then(() => {
+					deletePaper({ids: [row.paperId]}).then(res=>{
+						this.getData();
+						this.$message.success('删除成功');
+					})
+                })
+                .catch(() => {});
+        },
+        // 编辑操作
+        handleEdit(index, row) {
+            this.idx = index;
+            this.form = row;
+            this.editVisible = true;
+        },
+		// 查看试题
+		handleEditInfo(row) {
+            selectQuestionByPaper({paperid: row.paperId}).then(res=>{
+                this.test_list = res.data
+            })
+		    this.detailInfo = true;
+		},
+		// 保存编辑
+        saveEdit() {
+            this.editVisible = false;
+            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+            this.$set(this.tableData, this.idx, this.form);
+        }
     }
 };
 </script>

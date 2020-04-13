@@ -15,7 +15,7 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.courseid" placeholder="课程">
+                <el-select v-model="query.courseid" placeholder="课程" @change="getData">
                     <el-option
                     	v-for="item in course_list"
                     	:key="item.courseid"
@@ -23,7 +23,7 @@
                     	:value="item.courseid">
                     </el-option>
                 </el-select>
-                <el-select v-model="query.classid" placeholder="班级">
+                <el-select v-model="query.classid" placeholder="班级" @change="getData">
                     <el-option
                     	v-for="item in class_list"
                     	:key="item.classid"
@@ -147,7 +147,7 @@
 </template>
 
 <script>
-import { selectTeachInfo, deleteTeachInfo } from '../../../api/TeachInfoAPI.js';
+import { selectTeachInfo, deleteTeachInfo, updateTeachInfo } from '../../../api/TeachInfoAPI.js';
 import { getCourseList } from '../../../api/index.js';
 import { getClassList } from '../../../api/index.js';
 export default {
@@ -224,7 +224,7 @@ export default {
         },
         delAllSelection() {
 			if (this.idList.length>0){
-				deleteUser({ids: this.idList}).then(res=>{
+				deleteTeachInfo({ids: this.idList}).then(res=>{
 					this.$message.error(res.msg);
 					this.query.pageIndex = 1;
 					this.getData();
@@ -240,8 +240,10 @@ export default {
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-            this.$set(this.tableData, this.idx, this.form);
+			updateTeachInfo(this.form).then(res=>{
+				this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+				this.getData();
+			})
         },
         // 分页导航
         handlePageChange(val) {

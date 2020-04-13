@@ -51,11 +51,18 @@
                 <el-table-column prop="subjectid" label="ID" width="55" align="center"></el-table-column>
 				<el-table-column prop="type" label="题目类型" width="80" align="center"></el-table-column>
                 <el-table-column prop="content" label="题目"></el-table-column>
-				<el-table-column prop="options" label="选项"></el-table-column>
+				<el-table-column label="选项">
+                    <template slot-scope="scope">
+                        {{ scope.row.option1 }} 
+                        {{ scope.row.option2 }} 
+                        {{ scope.row.option3 }} 
+                        {{ scope.row.option4 }}
+                    </template>
+                </el-table-column>
 				<el-table-column prop="answer" label="答案" width="55" align="center"></el-table-column>
 				<el-table-column prop="difficulty" label="难度" width="55" align="center"></el-table-column>
                 <el-table-column prop="courseName" label="所属课程" width="120" align="center"></el-table-column>
-                <el-table-column prop="chapterName" label="所属章节" width="70" align="center"></el-table-column>
+                <el-table-column prop="chapterName" label="所属章节" width="80" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -119,13 +126,31 @@
 		            </el-select>
 		        </el-form-item>
 		        <el-form-item label="题目">
-		            <el-input v-model="form.title"></el-input>
+		            <el-input v-model="form.content"></el-input>
 		        </el-form-item>
-				<el-form-item label="选项">
-				    <el-input v-model="form.answer"></el-input>
-				</el-form-item>
+                <template v-if="form.type === '选择'">
+                    <el-form-item label="选项1">
+                        <el-input v-model="form.option1"></el-input>
+                    </el-form-item>
+                    <el-form-item label="选项2">
+                        <el-input v-model="form.option2"></el-input>
+                    </el-form-item>
+                    <el-form-item label="选项3">
+                        <el-input v-model="form.option3"></el-input>
+                    </el-form-item>
+                    <el-form-item label="选项4">
+                        <el-input v-model="form.option4"></el-input>
+                    </el-form-item>
+                </template>
 				<el-form-item label="答案">
 				    <el-input v-model="form.answer"></el-input>
+				</el-form-item>
+                <el-form-item label="难度">
+				    <el-select v-model="form.difficulty">
+		            	<el-option label="1" value="1"></el-option>
+						<el-option label="2" value="2"></el-option>
+						<el-option label="3" value="3"></el-option>
+		            </el-select>
 				</el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -147,7 +172,7 @@
 		        </el-upload>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
-		        <el-button @click="add_batch = false">确定</el-button>
+		        <el-button @click="add_batch = false,getData">确定</el-button>
 		    </span>
 		</el-dialog>
 		
@@ -186,11 +211,29 @@
 		        <el-form-item label="题目">
 		            <el-input v-model="add_param.content"></el-input>
 		        </el-form-item>
-				<el-form-item label="选项">
-				    <el-input v-model="add_param.option1"></el-input>
-				</el-form-item>
+                <template v-if="add_param.type === '选择'">
+                    <el-form-item label="选项1">
+                        <el-input v-model="add_param.option1"></el-input>
+                    </el-form-item>
+                    <el-form-item label="选项2">
+                        <el-input v-model="add_param.option2"></el-input>
+                    </el-form-item>
+                    <el-form-item label="选项3">
+                        <el-input v-model="add_param.option3"></el-input>
+                    </el-form-item>
+                    <el-form-item label="选项4">
+                        <el-input v-model="add_param.option4"></el-input>
+                    </el-form-item>
+                </template>
 				<el-form-item label="答案">
 				    <el-input v-model="add_param.answer"></el-input>
+				</el-form-item>
+                <el-form-item label="难度">
+				    <el-select v-model="add_param.difficulty">
+		            	<el-option label="1" value="1"></el-option>
+						<el-option label="2" value="2"></el-option>
+						<el-option label="3" value="3"></el-option>
+		            </el-select>
 				</el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
@@ -202,7 +245,7 @@
 </template>
 
 <script>
-import { selectQuestion, insertQuestion, deleteQuestion } from '../../../api/QuestionAPI';
+import { selectQuestion, insertQuestion, deleteQuestion, updateQuestion } from '../../../api/QuestionAPI';
 import { getCourseList } from '../../../api/index';
 import { getChapterList } from '../../../api/index';
 export default {
@@ -327,8 +370,11 @@ export default {
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-            this.$set(this.tableData, this.idx, this.form);
+            this.editVisible = false;
+			updateQuestion(this.form).then(res=>{
+				this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+				this.getData();
+			})
         },
         // 分页导航
         handlePageChange(val) {

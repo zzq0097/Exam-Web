@@ -9,11 +9,23 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-select v-model="query.address" placeholder="搜索条件" class="handle-select mr10">
-                    <el-option key="1" label="课程" value="课程"></el-option>
-                    <el-option key="2" label="班级" value="班级"></el-option>
+                <el-select v-model="query.courseid" placeholder="课程" class="handle-select mr10">
+                    <el-option
+                    	v-for="item in course_list"
+                    	:key="item.courseid"
+                    	:label="item.coursename"
+                    	:value="item.courseid">
+                    </el-option>
                 </el-select>
-                <el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
+                <el-select v-model="query.classid" placeholder="班级" class="handle-select mr10">
+                    <el-option
+                    	v-for="item in class_list"
+                    	:key="item.classid"
+                    	:label="item.classname"
+                    	:value="item.classid">
+                    </el-option>
+                </el-select>
+                <el-input v-model="query.name" placeholder="学生姓名" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
             </div>
             <el-table
@@ -22,14 +34,12 @@
                 class="table"
                 ref="multipleTable"
                 header-cell-class-name="table-header"
-                @selection-change="handleSelectionChange"
             >
-                <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="student" label="学生姓名" align="center"></el-table-column>
-				<el-table-column prop="" label="班级" align="center"></el-table-column>
-                <el-table-column prop="course" label="课程" align="center"></el-table-column>
-                <el-table-column prop="time" label="考试时间" align="center"></el-table-column>
+                <el-table-column prop="recordId" label="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="name" label="学生姓名" align="center"></el-table-column>
+				<el-table-column prop="className" label="班级" align="center"></el-table-column>
+                <el-table-column prop="courseName" label="课程" align="center"></el-table-column>
+                <el-table-column prop="startTime" label="考试时间" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -71,7 +81,7 @@
 </template>
 
 <script>
-import { getRecordList } from '../../../api/RecordAPI.js';
+import { getRecordList, getTestsByRecordId } from '../../../api/RecordAPI.js';
 import { getCourseList, getClassList } from '../../../api/index.js';
 export default {
     name: 'user',
@@ -85,8 +95,7 @@ export default {
                 pageSize: 10
             },
             tableData: [],
-            multipleSelection: [],
-            delList: [],
+            test_list: '',
             editVisible: false,
             pageTotal: 0,
             form: {},

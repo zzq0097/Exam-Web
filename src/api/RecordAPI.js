@@ -8,3 +8,10 @@ export const getRecordList = query => {
         params: query
     });
 };
+export const getTestsByRecordId = query => { 
+    return request({
+		url: '/selectQuestionByRecord',
+        method: 'get',
+        params: query
+    });
+};

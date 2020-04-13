@@ -34,18 +34,17 @@
                 class="table"
                 ref="multipleTable"
                 header-cell-class-name="table-header"
-                @selection-change="handleSelectionChange"
             >
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="student" label="学生姓名" align="center"></el-table-column>
-				<el-table-column prop="classname" label="班级" align="center"></el-table-column>
-                <el-table-column prop="coursename" label="课程" align="center"></el-table-column>
-                <el-table-column prop="time" label="考试时间" align="center"></el-table-column>
+                <el-table-column prop="recordId" label="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="name" label="学生姓名" align="center"></el-table-column>
+				<el-table-column prop="className" label="班级" align="center"></el-table-column>
+                <el-table-column prop="courseName" label="课程" align="center"></el-table-column>
+                <el-table-column prop="startTime" label="考试时间" align="center"></el-table-column>
 				<el-table-column label="批改状态" align="center">
 					<template slot-scope="scope">
 					    <el-tag
-					        :type="scope.row.state==='已批改'?'success':(scope.row.state==='未批改'?'danger':'')"
-					    >{{scope.row.state}}</el-tag>
+					        :type="scope.row.status==='已批改'?'success':(scope.row.status==='未批改'?'danger':'')"
+					    >{{scope.row.status}}</el-tag>
 					</template>
 				</el-table-column>
                 <el-table-column label="操作" width="300" align="center">
@@ -54,7 +53,7 @@
                             type="text"
                             icon="el-icon-edit"
                             @click="handleEdit(scope.$index, scope.row)"
-                        >查看答题记录</el-button>
+                        >查看记录</el-button>
 						<el-button
 						    type="text"
 						    icon="el-icon-edit"
@@ -76,14 +75,21 @@
         </div>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="批改" :visible.sync="editVisible" width="80%">
-            <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item v-for="item in form.test" :key="item.id">
-		            <p>题目：{{ item.test_title }}</p>
-					<p>答案：{{ item.stu_answer }}</p>
-					<p>题目分数：{{ item.test_score }}分</p>
-					得分<el-input min></el-input>
-		        </el-form-item>
+        <el-dialog title="查看记录" :visible.sync="editVisible" width="80%">
+            <hr/>
+            <el-form ref="form" :model="form" v-for="item in this.test_list" :key="item.id" label-width="90px">
+		        <el-form-item label="题目："> {{ item.content }} </el-form-item>
+                <template v-if="item.type === '选择'">
+                    <el-form-item label="选项A："> {{ item.option1 }} </el-form-item>
+                    <el-form-item label="选项B："> {{ item.option2 }} </el-form-item>
+                    <el-form-item label="选项C："> {{ item.option3 }} </el-form-item>
+                    <el-form-item label="选项D："> {{ item.option4 }} </el-form-item>
+                </template>
+                <el-form-item label="分值："> {{ item.score }} </el-form-item>
+                <el-form-item label="得分："> {{ item.stuScore }} </el-form-item>
+                <el-form-item label="参考答案："> {{ item.answer }} </el-form-item>
+                <el-form-item label="学生答案："> {{ item.stuAnswer }} </el-form-item>
+                <hr/>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -94,13 +100,16 @@
 </template>
 
 <script>
-import { getRecordList } from '../../../api/RecordAPI.js';
+import { getRecordList, getTestsByRecordId } from '../../../api/RecordAPI.js';
 import { getCourseList, getClassList } from '../../../api/index.js';
 export default {
     name: 'user',
     data() {
         return {
             query: {
+                courseid: '',
+                classid: '',
+                name: '',
                 pageIndex: 1,
                 pageSize: 10
             },
@@ -111,7 +120,8 @@ export default {
             idx: -1,
             id: -1,
             course_list: '',
-            class_list: ''
+            class_list: '',
+            test_list: ''
         };
     },
     created() {
@@ -135,6 +145,9 @@ export default {
         },
         // 编辑操作
         handleEdit(index, row) {
+            getTestsByRecordId({recordid: row.recordId}).then(res=>{
+                this.test_list = res.data
+            })
             this.idx = index;
             this.form = row;
             this.editVisible = true;

@@ -21,20 +21,27 @@ export const deletePaper = query => {
 export const updatePaper = query => {
     return request({
 		url: '/updatePaper',
-        method: 'get',
+        method: 'post',
         params: query
     });
 };
 export const insertPaper = query => {
     return request({
 		url: '/insertPaper',
-        method: 'get',
+        method: 'post',
         params: query
     });
 };
 export const getTestList = query => {
     return request({
 		url: '/getTestList',
+        method: 'get',
+        params: query
+    });
+};
+export const selectQuestionByPaper = query => {
+    return request({
+		url: '/selectQuestionByPaper',
         method: 'get',
         params: query
     });

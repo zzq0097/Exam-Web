@@ -40,7 +40,12 @@
                         <a v-else-if="scope.row.pattern===2">霸屏模式</a>
                     </template>
                 </el-table-column>
-				<el-table-column prop="isMonitor" label="是否开启监控" width="120" align="center"></el-table-column>
+				<el-table-column label="是否开启监控" width="120" align="center">
+                    <template slot-scope="scope">
+                        <a v-if="scope.row.isMonitor==='1'">开启</a>
+                        <a v-else-if="scope.row.isMonitor==='2'">关闭</a>
+                    </template>
+                </el-table-column>
 				<el-table-column prop="startTime" label="考试开始时间" align="center"></el-table-column>
 				<el-table-column prop="finishTime" label="考试结束时间" align="center"></el-table-column>
 				<el-table-column prop="courseName" label="考试相关课程" align="center"></el-table-column>
@@ -54,7 +59,7 @@
 						<el-button
 						    type="text"
 						    icon="el-icon-edit"
-						    @click="handleEditInfo(scope.$index, scope.row)"
+						    @click="handleEditInfo(scope.row)"
 						>查看试题</el-button>
                         <el-button
                             type="text"
@@ -103,9 +108,20 @@
                         <el-option value="2" label="关闭"></el-option>
 				    </el-select>
                 </el-form-item>
-				<el-form-item label="考试开始时间">
-				    <el-input v-model="form.start_time"></el-input>
-				</el-form-item>
+                <el-form-item label="开始时间">
+                    <el-date-picker
+                        v-model="form.startTime"
+                        type="datetime"
+                        placeholder="选择日期时间">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="结束时间">
+                    <el-date-picker
+                        v-model="form.finishTime"
+                        type="datetime"
+                        placeholder="选择日期时间">
+                    </el-date-picker>
+                </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -114,11 +130,17 @@
         </el-dialog>
 		<!-- 详细信息弹出框 -->
 		<el-dialog title="详细信息" :visible.sync="detailInfo" width="60%">
-		    <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item v-for="item in test_list" :key="item.test_id">
-		            <p>题目：{{ item.test_title }}</p>
-		        	<p>题目分数：{{ item.test_score }}分</p>
-		        </el-form-item>
+            <hr/>
+		    <el-form ref="form" :model="form" v-for="item in test_list" :key="item.test_id" label-width="70px">
+		        <el-form-item label="题目："> {{ item.content }} </el-form-item>
+                <template v-if="item.type === '选择'">
+                    <el-form-item label="选项A："> {{ item.option1 }} </el-form-item>
+                    <el-form-item label="选项B："> {{ item.option2 }} </el-form-item>
+                    <el-form-item label="选项C："> {{ item.option3 }} </el-form-item>
+                    <el-form-item label="选项D："> {{ item.option4 }} </el-form-item>
+                </template>
+                <el-form-item label="难度："> {{ item.difficulty }} </el-form-item>
+                <hr/>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="detailInfo = false">取 消</el-button>
@@ -129,7 +151,7 @@
 </template>
 
 <script>
-import { selectPaper, deletePaper } from '../../../api/PaperAPI';
+import { selectPaper, deletePaper, selectQuestionByPaper, updatePaper } from '../../../api/PaperAPI';
 import { getClassList } from '../../../api/index';
 import { getCourseList } from '../../../api/index';
 export default {
@@ -152,7 +174,8 @@ export default {
             form: {},
             idx: -1,
             id: -1,
-			course_list: ''
+            course_list: '',
+            test_list: ''
         };
     },
     created() {
@@ -222,17 +245,20 @@ export default {
             this.form = row;
             this.editVisible = true;
         },
-		// 编辑操作
-		handleEditInfo(index, row) {
-		    this.idx = index;
-		    this.form = row;
+		// 查看试题
+		handleEditInfo(row) {
+            selectQuestionByPaper({paperid: row.paperId}).then(res=>{
+                this.test_list = res.data
+            })
 		    this.detailInfo = true;
 		},
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-            this.$set(this.tableData, this.idx, this.form);
+			updatePaper(this.form).then(res=>{
+				this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+				this.getData();
+			})
         },
         // 分页导航
         handlePageChange(val) {
