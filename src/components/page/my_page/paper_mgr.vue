@@ -80,7 +80,9 @@
                     @current-change="handlePageChange"
                 ></el-pagination>
             </div>
-			<el-button type="primary" @click="add_paper">新增试卷</el-button>
+            <router-link to="/add_paper">
+			    <el-button type="primary">新增试卷</el-button>
+            </router-link>
         </div>
 
         <!-- 编辑弹出框 -->

@@ -21,7 +21,7 @@
                 </el-card>
                 <el-card shadow="hover" style="height:252px;">
                     <div slot="header" class="clearfix">
-                        <span>语言详情</span>
+                        <span>课程试卷占比</span>
                     </div>Vue
                     <el-progress :percentage="71.3" color="#42b983"></el-progress>JavaScript
                     <el-progress :percentage="24.1" color="#f1e05a"></el-progress>CSS
@@ -36,7 +36,7 @@
                             <div class="grid-content grid-con-1">
                                 <i class="el-icon-lx-people grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">60</div>
+                                    <div class="grid-num">{{ user_count }}</div>
                                     <div>用户数量</div>
                                 </div>
                             </div>
@@ -47,7 +47,7 @@
                             <div class="grid-content grid-con-2">
                                 <i class="el-icon-lx-text grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">300</div>
+                                    <div class="grid-num">{{ record_count }}</div>
                                     <div>考试记录</div>
                                 </div>
                             </div>
@@ -58,7 +58,7 @@
                             <div class="grid-content grid-con-3">
                                 <i class="el-icon-lx-text grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">50</div>
+                                    <div class="grid-num">{{ paper_count }}</div>
                                     <div>试卷数量</div>
                                 </div>
                             </div>
@@ -112,10 +112,14 @@
 <script>
 import Schart from 'vue-schart';
 import bus from '../common/bus';
+import { userCount,paperCount,recordCount } from '../../api/CountAPI';
 export default {
     name: 'dashboard',
     data() {
         return {
+            user_count: 0,
+            paper_count: 0,
+            record_count: 0,
             name: localStorage.getItem('ms_username'),
             todoList: [
                 {
@@ -226,10 +230,13 @@ export default {
             return localStorage.getItem('ms_role') === '1' ? '管理员' : '普通用户';
         }
     },
-    // created() {
-    //     this.handleListener();
-    //     this.changeDate();
-    // },
+    created() {
+        // this.handleListener();
+        // this.changeDate();
+        userCount().then(res=>{ this.user_count = res })
+        paperCount().then(res=>{ this.paper_count = res })
+        recordCount().then(res=>{ this.record_count = res })
+    },
     // activated() {
     //     this.handleListener();
     // },

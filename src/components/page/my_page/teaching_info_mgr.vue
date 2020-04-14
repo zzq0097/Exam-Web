@@ -91,17 +91,24 @@
                     </el-select>
 				</el-form-item>
 				<el-form-item label="授课班级">
-				<el-select v-model="form.classid" placeholder="班级">
-                    <el-option
-                    	v-for="item in class_list"
-                    	:key="item.classid"
-                    	:label="item.classname"
-                    	:value="item.classid">
-                    </el-option>
-                </el-select>
+                    <el-select v-model="form.classid" placeholder="班级">
+                        <el-option
+                            v-for="item in class_list"
+                            :key="item.classid"
+                            :label="item.classname"
+                            :value="item.classid">
+                        </el-option>
+                    </el-select>
 				</el-form-item>
-                <el-form-item label="教师姓名">
-		            <el-input v-model="form.teacher"></el-input>
+                <el-form-item label="授课教师">
+                    <el-select v-model="form.teacherid">
+                        <el-option
+                            v-for="item in teacher_list"
+                            :key="item.teacherid"
+                            :label="item.teachername"
+                            :value="item.teacherid">
+                        </el-option>
+                    </el-select>
 		        </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -114,7 +121,7 @@
 		<el-dialog title="添加授课信息" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 				<el-form-item label="课程">
-                    <el-select v-model="form.courseid" placeholder="课程">
+                    <el-select v-model="add_param.courseid" placeholder="课程">
                         <el-option
                             v-for="item in course_list"
                             :key="item.courseid"
@@ -124,17 +131,24 @@
                     </el-select>
 				</el-form-item>
 				<el-form-item label="授课班级">
-				<el-select v-model="form.classid" placeholder="班级">
-                    <el-option
-                    	v-for="item in class_list"
-                    	:key="item.classid"
-                    	:label="item.classname"
-                    	:value="item.classid">
-                    </el-option>
-                </el-select>
+                    <el-select v-model="add_param.classid" placeholder="班级">
+                        <el-option
+                            v-for="item in class_list"
+                            :key="item.classid"
+                            :label="item.classname"
+                            :value="item.classid">
+                        </el-option>
+                    </el-select>
 				</el-form-item>
-                <el-form-item label="教师姓名">
-		            <el-input v-model="form.teacher"></el-input>
+                <el-form-item label="授课教师">
+                    <el-select v-model="add_param.teacherid">
+                        <el-option
+                            v-for="item in teacher_list"
+                            :key="item.teacherid"
+                            :label="item.teachername"
+                            :value="item.teacherid">
+                        </el-option>
+                    </el-select>
 		        </el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
@@ -175,7 +189,8 @@ export default {
             idx: -1,
             id: -1,
             course_list: '',
-            class_list: ''
+            class_list: '',
+            teacher_list: ''
         };
     },
     created() {

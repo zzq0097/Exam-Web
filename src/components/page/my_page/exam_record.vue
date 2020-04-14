@@ -57,7 +57,7 @@
 						<el-button
 						    type="text"
 						    icon="el-icon-edit"
-						    @click="handleEdit(scope.$index, scope.row)"
+						    @click="playVideo(scope.$index, scope.row)"
 						>查看监控</el-button>
                     </template>
                 </el-table-column>
@@ -99,6 +99,14 @@
                 <el-button type="primary" @click="saveEdit">确 定</el-button>
             </span>
         </el-dialog>
+
+        <!-- 视频播放窗口 -->
+        <el-dialog title="监控视频" :visible.sync="videoVisible" width="60%" height="60%">
+            <a :href="form.monitor">{{ form.monitor }}</a>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="videoVisible = false">关闭</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -118,6 +126,7 @@ export default {
             },
             tableData: [],
             editVisible: false,
+            videoVisible: false,
             pageTotal: 0,
             form: {},
             idx: -1,
@@ -146,6 +155,11 @@ export default {
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
+        },
+        playVideo(index, row){
+            this.idx = index;
+            this.form = row;
+            this.videoVisible = true;
         },
         // 编辑操作
         handleEdit(index, row) {

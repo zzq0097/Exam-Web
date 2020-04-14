@@ -65,7 +65,7 @@
         <!-- 编辑弹出框 -->
         <el-dialog title="批改" :visible.sync="editVisible" width="80%">
             <hr/>
-		    <el-form ref="form" :model="form" v-for="item in test_list" :key="item.test_id" label-width="90px">
+		    <el-form ref="form" :model="form" v-for="(item,index) in test_list" :key="index" label-width="90px">
 		        <el-form-item label="题目：">
                     <el-tag>{{item.type}}</el-tag>
                     {{ item.content }}
@@ -78,22 +78,17 @@
                 </template>
                 <el-form-item label="考生答案："> {{ item.stuAnswer }} </el-form-item>
                 <el-form-item label="题目分值："> {{ item.score }} </el-form-item>
-                <template v-if="item.type === '选择'">
-                    <el-form-item label="学生得分：">
+                <el-form-item label="学生得分：" v-if="item.type === '选择' || item.type === '判断'">
                     <el-col :span="6">
-                        <template v-if="item.stuAnswer === item.answer">
-                            <el-input placeholder="请输入得分" disabled v-model="stu_score[i]"></el-input>
-                        </template>
+                        <el-tag type="success" v-if="item.answer === item.stuAnswer">{{ item.score }}</el-tag>
+                        <el-tag type="danger" v-else>0</el-tag>
                     </el-col>
                 </el-form-item>
-                </template>
-                <template v-else>
-                    <el-form-item label="学生得分：">
-                        <el-col :span="6">
-                            <el-input placeholder="请输入得分" v-model="stu_score[i]"></el-input>
-                        </el-col>
-                    </el-form-item>
-                </template>
+                <el-form-item label="学生得分：" v-else>
+                    <el-col :span="6">
+                        <el-input  placeholder="请输入得分" v-model="stu_score[index]"></el-input>
+                    </el-col>
+                </el-form-item>
                 <hr/>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
@@ -129,7 +124,6 @@ export default {
             course_list: '',
             class_list: '',
             test_list: '',
-            i: '',
             stu_score: []
         };
     },
@@ -164,7 +158,8 @@ export default {
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-            submitScore({score: this.stu_scors}).then(res=>{
+            console.log(this.stu_score);
+            submitScore({score: this.stu_score}).then(res=>{
                 this.$message.success('批改提交成功');
             })
             

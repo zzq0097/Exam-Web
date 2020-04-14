@@ -20,8 +20,9 @@
 				    <el-option key="3" label="RB软工网162" value="学生"></el-option>
 					<el-option key="4" label="RB软工移163" value="班级"></el-option>
 				</el-select>
-				试卷平均分：<el-button></el-button>
-				试卷得分方差:<el-button></el-button>
+				<el-tag>试卷平均分：72</el-tag>
+                
+				<el-tag>试卷得分方差: 0.5</el-tag>
             </div>
             <el-table
                 :data="tableData"

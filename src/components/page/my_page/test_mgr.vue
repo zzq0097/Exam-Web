@@ -53,10 +53,10 @@
                 <el-table-column prop="content" label="题目"></el-table-column>
 				<el-table-column label="选项">
                     <template slot-scope="scope">
-                        {{ scope.row.option1 }} 
-                        {{ scope.row.option2 }} 
-                        {{ scope.row.option3 }} 
-                        {{ scope.row.option4 }}
+                        <el-tag>A</el-tag> {{ scope.row.option1 }}
+                        <el-tag>B</el-tag> {{ scope.row.option2 }}
+                        <el-tag>C</el-tag> {{ scope.row.option3 }}
+                        <el-tag>D</el-tag> {{ scope.row.option4 }}
                     </template>
                 </el-table-column>
 				<el-table-column prop="answer" label="答案" width="55" align="center"></el-table-column>
@@ -172,7 +172,7 @@
 		        </el-upload>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
-		        <el-button @click="add_batch = false,getData">确定</el-button>
+		        <el-button @click="add_batch = false,getData()">确定</el-button>
 		    </span>
 		</el-dialog>
 		
