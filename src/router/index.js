@@ -24,16 +24,26 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
                     meta: { title: '自定义图标' }
                 },
-                {
-                    path: '/user',
-                    component: () => import(/* webpackChunkName: "table" */ '../components/page/my_page/user_mgr.vue'),
-                    meta: { title: '用户管理' }
-                },
 				{
 				    path: '/paper_mgr',
 				    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/my_page/paper_mgr.vue'),
 				    meta: { title: '考试管理' }
-				},
+                },
+                {
+				    path: '/student_mgr',
+				    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/my_page/student_mgr.vue'),
+				    meta: { title: '学生管理' }
+                },
+                {
+				    path: '/teacher_mgr',
+				    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/my_page/teacher_mgr.vue'),
+				    meta: { title: '教师管理' }
+                },
+                {
+                    path: '/admin_mgr',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/my_page/admin_mgr.vue'),
+                    meta: { title: '管理员' }
+                },
 				{
 				    path: '/add_paper',
 				    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/my_page/add_paper.vue'),
@@ -43,6 +53,11 @@ export default new Router({
 				    path: '/class_mgr',
 				    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/my_page/class_mgr.vue'),
 				    meta: { title: '班级管理' }
+                },
+                {
+				    path: '/chapter_mgr',
+				    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/my_page/chapter_mgr.vue'),
+				    meta: { title: '章节管理' }
 				},
 				{
 				    path: '/blacklist_mgr',
@@ -52,12 +67,12 @@ export default new Router({
 				{
 				    path: '/course_info_mgr',
 				    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/my_page/course_info_mgr.vue'),
-				    meta: { title: '课程信息管理' }
+				    meta: { title: '课程管理' }
 				},
 				{
 				    path: '/teaching_info_mgr',
 				    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/my_page/teaching_info_mgr.vue'),
-				    meta: { title: '授课信息管理' }
+				    meta: { title: '授课管理' }
 				},
 				{
 				    path: '/correct_paper',

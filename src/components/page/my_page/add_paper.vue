@@ -33,7 +33,36 @@
                             <el-radio label="2">关闭</el-radio>
                         </el-radio-group>
                     </el-form-item>
-					<el-form-item label="组卷方式">
+					<el-form-item label="组卷策略">
+						<el-button type="primary" @click="add_test">添加条件策略</el-button>
+						<el-table
+							:data="tableData"
+							border
+							class="table"
+							ref="multipleTable"
+							header-cell-class-name="table-header"
+						>
+							<el-table-column prop="type" label="题目类型" align="center"></el-table-column>
+							<el-table-column prop="count" label="数量" align="center"></el-table-column>
+							<el-table-column prop="score" label="分值" align="center"></el-table-column>
+							<el-table-column label="操作" width="180" align="center">
+								<template slot-scope="scope">
+									<el-button
+										type="text"
+										icon="el-icon-edit"
+										@click="handleEdit(scope.$index, scope.row)"
+									>编辑</el-button>
+									<el-button
+										type="text"
+										icon="el-icon-delete"
+										class="red"
+										@click="handleDelete(scope.$index, scope.row)"
+									>删除</el-button>
+								</template>
+							</el-table-column>
+						</el-table>
+					</el-form-item>
+					<el-form-item label="组卷条件">
 					    <el-radio-group v-model="form.mode" @change="createType">
 					        <el-radio label="1">全随机组卷</el-radio>
 					        <el-radio label="2">按章节/难度随机组卷</el-radio>
@@ -41,37 +70,6 @@
 					    </el-radio-group>
 					</el-form-item>
 					<el-form-item>
-					    <div v-if="box2">
-							<el-button type="primary" @click="add_test">添加条件策略</el-button>
-							<el-table
-							    :data="tableData"
-							    border
-							    class="table"
-							    ref="multipleTable"
-							    header-cell-class-name="table-header"
-							>
-								<el-table-column prop="type" label="题目类型" width="80"></el-table-column>
-							    <el-table-column prop="num" label="数量" width="55"></el-table-column>
-								<el-table-column prop="score" label="分值" width="55"></el-table-column>
-								<el-table-column prop="chapter" label="章节" align="center"></el-table-column>
-							    <el-table-column prop="difficulty" label="难度" width="55" align="center"></el-table-column>
-							    <el-table-column label="操作" width="180" align="center">
-							        <template slot-scope="scope">
-							            <el-button
-							                type="text"
-							                icon="el-icon-edit"
-							                @click="handleEdit(scope.$index, scope.row)"
-							            >编辑</el-button>
-							            <el-button
-							                type="text"
-							                icon="el-icon-delete"
-							                class="red"
-							                @click="handleDelete(scope.$index, scope.row)"
-							            >删除</el-button>
-							        </template>
-							    </el-table-column>
-							</el-table>
-						</div>
 						<div v-if="box3">
 							<el-select v-model="data" placeholder="请选择章节">
 								<el-option label="第一章" value="1"></el-option>
@@ -80,7 +78,6 @@
 								<el-option label="第四章" value="4"></el-option>
 								<el-option label="第五章" value="5"></el-option>
 							</el-select>
-							
 							<template>
 								<el-transfer v-model="value" :data="datas"></el-transfer>
 							</template>
@@ -114,44 +111,28 @@
 		<el-dialog title="编辑" :visible.sync="editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 				<el-form-item label="题目类型">
-					<el-select v-model="data">
-						<el-option label="选择"></el-option>
-						<el-option label="填空"></el-option>
-						<el-option label="判断"></el-option>
-						<el-option label="简答"></el-option>
-						<el-option label="编程"></el-option>
+					<el-select v-model="strategy.type">
+						<el-option label="选择" value="选择"></el-option>
+						<el-option label="填空" value="填空"></el-option>
+						<el-option label="判断" value="判断"></el-option>
+						<el-option label="简答" value="简单"></el-option>
+						<el-option label="编程" value="编程"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="题目章节">
-				    <el-select v-model="data">
-				    	<el-option label="第一章"></el-option>
-				    	<el-option label="第二章"></el-option>
-				    	<el-option label="第三章"></el-option>
-						<el-option label="第四章"></el-option>
-						<el-option label="第五章"></el-option>
-				    </el-select>
-				</el-form-item>
 		        <el-form-item label="题目数量">
-		            <el-select v-model="data">
-		            	<el-option v-for="i in 20" :key="i" label="">{{i}}</el-option>
-		            </el-select>
-		        </el-form-item>
-		        <el-form-item label="题目难度">
-		            <el-select v-model="data">
-		            	<el-option label="1"></el-option>
-		            	<el-option label="2"></el-option>
-		            	<el-option label="3"></el-option>
+		            <el-select v-model="strategy.count">
+		            	<el-option v-for="i in 20" :key="i" :label="i" :value="i"></el-option>
 		            </el-select>
 		        </el-form-item>
 				<el-form-item label="题目分值">
-				    <el-select v-model="data">
-				    	<el-option v-for="i in 20" :key="i" label="">{{i}}</el-option>
+				    <el-select v-model="strategy.score">
+				    	<el-option v-for="i in 20" :key="i" :label="i" :value="i"></el-option>
 				    </el-select>
 				</el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="editVisible = false">取 消</el-button>
-		        <el-button type="primary" @click="saveEdit">确 定</el-button>
+		        <el-button type="primary" @click="add_strategy(),editVisible = false">确 定</el-button>
 		    </span>
 		</el-dialog>
     </div>
@@ -181,13 +162,7 @@ export default {
 			datas: generateData(),
 			box2: false,
 			box3: false,
-			tableData: [{
-				type: '选择',
-				num: 5,
-				score: 5,
-				chapter: '第二章',
-				difficulty: 2
-			}],
+			tableData: [],
             form: {
                 mode: '',
                 starttime: '',
@@ -203,6 +178,11 @@ export default {
 				// }],
                 questionids: []
 			},
+			strategy: {
+				type: '',
+				count: '',
+				score: ''
+			},
 			course_list: ''
         };
 	},
@@ -217,6 +197,9 @@ export default {
         },
 		add_test() {
 			this.editVisible = true
+		},
+		add_strategy() {
+			this.tableData.push(this.strategy)
 		},
 		createType() {
 			if (this.form.mode === '1') {

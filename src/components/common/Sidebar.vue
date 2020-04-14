@@ -64,7 +64,21 @@ export default {
                 {
                     icon: 'el-icon-lx-peoplefill',
                     index: 'user',
-                    title: '用户管理'
+                    title: '用户管理',
+                    subs: [
+					    {
+					        index: 'student_mgr',
+					        title: '学生管理'
+					    },
+					    {
+					        index: 'teacher_mgr',
+					        title: '教师管理'
+                        },
+                        {
+					        index: 'admin_mgr',
+					        title: '管理员'
+					    }
+					]
                 },
                 {
                     icon: 'el-icon-lx-text',
@@ -88,13 +102,16 @@ export default {
 					subs: [
 					    {
 					        index: 'course_info_mgr',
-					        title: '课程信息管理'
+					        title: '课程管理'
 					    },
 						{
+						    index: 'chapter_mgr',
+						    title: '章节管理'
+                        },
+                        {
 						    index: 'teaching_info_mgr',
-						    title: '授课信息管理'
+						    title: '授课管理'
 						}
-					    
 					]
 				},
 				{
