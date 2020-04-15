@@ -111,7 +111,11 @@ export default {
                         {
 						    index: 'teaching_info_mgr',
 						    title: '授课管理'
-						}
+                        },
+                        {
+						    index: 'attend_class_mgr',
+						    title: '上课管理'
+						},
 					]
 				},
 				{

@@ -15,7 +15,7 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.classid" placeholder="班级" @change="getData" class="handle-input mr10">
+                <el-select v-model="query.classid" placeholder="班级" @change="query.name = '',getData()" class="handle-input mr10">
                     <el-option
                         v-for="item in class_list"
                         :key="item.classid"
@@ -67,7 +67,7 @@
                     @current-change="handlePageChange"
                 ></el-pagination>
             </div>
-		<el-button type="primary" @click="showAddDlg">添加用户</el-button>
+		<el-button type="primary" @click="showAddDlg">添加学生</el-button>
 		<el-button type="primary" @click="showAddsDlg">批量导入</el-button>
         </div>
 
@@ -85,13 +85,6 @@
 				</el-form-item>
 				<el-form-item label="电话">
 				    <el-input v-model="form.tel"></el-input>
-				</el-form-item>
-				<el-form-item label="角色">
-				    <el-select v-model="form.role">
-				    	<el-option label="管理员" value="1"></el-option>
-				    	<el-option label="教师" value="2"></el-option>
-				    	<el-option label="学生" value="3"></el-option>
-				    </el-select>
 				</el-form-item>
 				<el-form-item label="班级">
 				    <el-select v-model="form.classname">
@@ -111,7 +104,7 @@
         </el-dialog>
 		
 		<!-- 添加弹出框 -->
-		<el-dialog title="添加用户" :visible.sync="add_editVisible" width="30%">
+		<el-dialog title="添加" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 		        <el-form-item label="用户名">
 		            <el-input v-model="add_param.username"></el-input>
@@ -124,13 +117,6 @@
 				</el-form-item>
 				<el-form-item label="电话">
 				    <el-input v-model="add_param.tel"></el-input>
-				</el-form-item>
-				<el-form-item label="角色">
-					<el-select v-model="add_param.role">
-						<el-option label="管理员" value="1"></el-option>
-						<el-option label="教师" value="2"></el-option>
-						<el-option label="学生" value="3"></el-option>
-					</el-select>
 				</el-form-item>
 				<el-form-item label="班级">
 				    <el-select v-model="add_param.classid">
@@ -171,7 +157,7 @@
 </template>
 
 <script>
-import { getUserInfo } from '../../../api/UserAPI';
+import { selectStudent } from '../../../api/UserAPI';
 import { insertUser } from '../../../api/UserAPI';
 import { deleteUser } from '../../../api/UserAPI';
 import { updateUser } from '../../../api/UserAPI';
@@ -181,19 +167,13 @@ export default {
     data() {
         return {
             query: {
-				role: '',
+				classid: '',
 				name: '',
 				pageIndex: 1, 
 				pageSize: 10
             },
-            // query: {
-			// 	classid: '',
-			// 	name: '',
-			// 	pageIndex: 1, 
-			// 	pageSize: 10
-            // },
 			add_param:{
-				role: '',
+				role: '3',
 				classid: '',
 				username: '',
 				password: '',
@@ -225,19 +205,15 @@ export default {
 		},
         // 获取 easy-mock 的模拟数据
         getData() {
-            getUserInfo(this.query).then(res => {
+            selectStudent(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
                 this.pageTotal = res.pageTotal;
             });
         },
-		getUserByRole(){
-			this.query.name = '';
-			this.getData();
-		},
         // 触发搜索按钮
         handleSearch() {
-			this.query.role = '';
+            this.query.classid = '';
             this.getData();
         },
 		addUser(){
@@ -258,7 +234,7 @@ export default {
 						this.getData();
 						this.$message.success('删除成功');
 					}).catch(()=>{
-                        this.$message.error('删除成功');
+                        this.$message.error('删除失败');
                     })
                 })
                 .catch(() => {});

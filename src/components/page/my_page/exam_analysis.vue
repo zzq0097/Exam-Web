@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import { getUserInfo } from '../../../api/UserAPI.js';
+import { selectStudent } from '../../../api/UserAPI.js';
 export default {
     name: 'user',
     data() {

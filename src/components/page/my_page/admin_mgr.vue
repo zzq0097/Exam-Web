@@ -27,7 +27,7 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="adminid" label="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="name" label="姓名" align="center"></el-table-column>
                 <el-table-column prop="username" label="用户名" align="center"></el-table-column>
                 <el-table-column prop="password" label="密码" align="center"></el-table-column>
@@ -58,8 +58,7 @@
                     @current-change="handlePageChange"
                 ></el-pagination>
             </div>
-		<el-button type="primary" @click="showAddDlg">添加用户</el-button>
-		<el-button type="primary" @click="showAddsDlg">批量导入</el-button>
+		<el-button type="primary" @click="showAddDlg">添加管理员</el-button>
         </div>
 
         <!-- 编辑弹出框 -->
@@ -85,7 +84,7 @@
         </el-dialog>
 		
 		<!-- 添加弹出框 -->
-		<el-dialog title="添加用户" :visible.sync="add_editVisible" width="30%">
+		<el-dialog title="添加" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 		        <el-form-item label="用户名">
 		            <el-input v-model="add_param.username"></el-input>
@@ -105,33 +104,14 @@
 		        <el-button type="primary" @click="addAdmin">确 定</el-button>
 		    </span>
 		</el-dialog>
-		
-		<!-- 批量导入弹出框 -->
-		<el-dialog title="批量添加" :visible.sync="add_batch" width="30%">
-		    <el-form ref="form" :model="form" label-width="70px">
-		        <el-upload
-					class="upload-demo"
-					drag
-					action="https://jsonplaceholder.typicode.com/posts/"
-					multiple>
-					<i class="el-icon-upload"></i>
-					<div class="el-upload__text">将Excel文件拖到此处，或<em>点击上传</em></div>
-		        </el-upload>
-		    </el-form>
-		    <span slot="footer" class="dialog-footer">
-		        <el-button @click="add_batch = false">取 消</el-button>
-		        <el-button type="primary" @click="saveEdit">确 定</el-button>
-		    </span>
-		</el-dialog>
-		
     </div>
 </template>
 
 <script>
-import { selectAdmin } from '../../../api/AdminAPI';
-import { insertAdmin } from '../../../api/AdminAPI';
-import { deleteAdmin } from '../../../api/AdminAPI';
-import { updateAdmin } from '../../../api/AdminAPI';
+import { selectAdmin } from '../../../api/UserAPI';
+import { insertUser } from '../../../api/UserAPI';
+import { deleteUser } from '../../../api/UserAPI';
+import { updateUser } from '../../../api/UserAPI';
 import { getClassList } from '../../../api/index';
 export default {
     name: 'user',
@@ -143,6 +123,7 @@ export default {
 				pageSize: 10
             },
 			add_param:{
+                role: '1',
 				username: '',
 				password: '',
 				tel: '',
@@ -152,7 +133,6 @@ export default {
 			idList: [],
             editVisible: false,
 			add_editVisible: false,
-			add_batch: false,
             pageTotal: 0,
             form: {},
             idx: -1,
@@ -168,9 +148,6 @@ export default {
 		showAddDlg() {
 			this.add_editVisible = true
 		},
-		showAddsDlg() {
-			this.add_batch = true
-		},
         // 获取 easy-mock 的模拟数据
         getData() {
             selectAdmin(this.query).then(res => {
@@ -183,11 +160,13 @@ export default {
             this.getData();
         },
 		addAdmin(){
-			insertAdmin(this.add_param).then(res=>{
+			insertUser(this.add_param).then(res=>{
 				this.getData();
-				this.add_editVisible = false;
 				this.$message.success('添加成功');
-			})
+			}).catch(()=>{
+                this.$message.error('添加失败');
+            })
+            this.add_editVisible = false;
 		},
         // 删除操作
         handleDelete(index, row) {
@@ -196,7 +175,7 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-					deleteAdmin({ids: [row.adminid]}).then(res=>{
+					deleteUser({ids: [row.id]}).then(res=>{
 						this.getData();
 						this.$message.success('删除成功');
 					}).catch(()=>{
@@ -209,12 +188,12 @@ export default {
         handleSelectionChange(val) {
 			this.idList = [];
 			for (var i=0;i<val.length;i++){
-				this.idList.push(val[i].adminid)
+				this.idList.push(val[i].id)
 			}
         },
         delAllSelection() {
 			if (this.idList.length>0){
-				deleteAdmin({ids: this.idList}).then(res=>{
+				deleteUser({ids: this.idList}).then(res=>{
 					this.$message.error(res.msg);
 					this.query.pageIndex = 1;
 					this.getData();
@@ -230,7 +209,7 @@ export default {
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-			updateAdmin(this.form).then(res=>{
+			updateUser(this.form).then(res=>{
 				this.$message.success(`修改第 ${this.idx + 1} 行成功`);
 				this.getData();
 			})

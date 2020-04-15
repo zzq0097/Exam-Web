@@ -1,14 +1,32 @@
 import request from '../utils/request';
 import qs from 'qs';
 
-// 用户管理
-export const getUserInfo = query => { 
+
+// 学生查询
+export const selectStudent = query => { 
     return request({
-		url: '/selectUser',
+		url: '/selectStudent',
         method: 'get',
         params: query
     });
 };
+// 教师查询
+export const selectTeacher = query => { 
+    return request({
+		url: '/selectTeacher',
+        method: 'get',
+        params: query
+    });
+};
+// 管理员查询
+export const selectAdmin = query => { 
+    return request({
+		url: '/selectAdmin',
+        method: 'get',
+        params: query
+    });
+};
+// 公用增删改
 export const deleteUser = query => {
     return request({
 		url: '/deleteUser',
@@ -22,7 +40,7 @@ export const deleteUser = query => {
 export const updateUser = query => {
     return request({
 		url: '/updateUser',
-        method: 'put',
+        method: 'post',
         params: query
     });
 };

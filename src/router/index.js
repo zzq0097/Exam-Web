@@ -48,6 +48,11 @@ export default new Router({
 				    path: '/add_paper',
 				    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/my_page/add_paper.vue'),
 				    meta: { title: '新增考试' }
+                },
+                {
+				    path: '/attend_class_mgr',
+				    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/my_page/attend_class_mgr.vue'),
+				    meta: { title: '上课管理' }
 				},
 				{
 				    path: '/class_mgr',

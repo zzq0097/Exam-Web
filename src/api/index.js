@@ -40,3 +40,18 @@ export const getBlackListTypes = query => {
 		params: query
 	});
 };
+// 老师下拉框
+export const teacherOption = query => {
+	return request({
+		url: '/teacherOption',
+		method: 'get',
+		params: query
+	});
+};
+export const courseOption = query => {
+	return request({
+		url: '/courseOption',
+		method: 'get',
+		params: query
+	});
+};

@@ -27,7 +27,7 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="teacherid" label="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="name" label="姓名" align="center"></el-table-column>
                 <el-table-column prop="username" label="用户名" align="center"></el-table-column>
                 <el-table-column prop="password" label="密码" align="center"></el-table-column>
@@ -58,12 +58,12 @@
                     @current-change="handlePageChange"
                 ></el-pagination>
             </div>
-		<el-button type="primary" @click="showAddDlg">添加用户</el-button>
+		<el-button type="primary" @click="showAddDlg">添加教师</el-button>
 		<el-button type="primary" @click="showAddsDlg">批量导入</el-button>
         </div>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑信息" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px">
 		        <el-form-item label="用户名">
 		            <el-input v-model="form.username"></el-input>
@@ -85,7 +85,7 @@
         </el-dialog>
 		
 		<!-- 添加弹出框 -->
-		<el-dialog title="添加教师" :visible.sync="add_editVisible" width="30%">
+		<el-dialog title="添加" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 		        <el-form-item label="用户名">
 		            <el-input v-model="add_param.username"></el-input>
@@ -128,10 +128,10 @@
 </template>
 
 <script>
-import { selectTeacher } from '../../../api/TeacherAPI';
-import { insertTeacher } from '../../../api/TeacherAPI';
-import { deleteTeacher } from '../../../api/TeacherAPI';
-import { updateTeacher } from '../../../api/TeacherAPI';
+import { selectTeacher } from '../../../api/UserAPI';
+import { insertUser } from '../../../api/UserAPI';
+import { deleteUser } from '../../../api/UserAPI';
+import { updateUser } from '../../../api/UserAPI';
 import { getClassList } from '../../../api/index';
 export default {
     name: 'user',
@@ -143,6 +143,7 @@ export default {
 				pageSize: 10
             },
 			add_param:{
+                role: '2',
 				username: '',
 				password: '',
 				tel: '',
@@ -179,17 +180,12 @@ export default {
                 this.pageTotal = res.pageTotal;
             });
         },
-		getTeacherByRole(){
-			this.query.name = '';
-			this.getData();
-		},
         // 触发搜索按钮
         handleSearch() {
-			this.query.role = '';
             this.getData();
         },
 		addTeacher(){
-			insertTeacher(this.add_param).then(res=>{
+			insertUser(this.add_param).then(res=>{
 				this.getData();
 				this.add_editVisible = false;
 				this.$message.success('添加成功');
@@ -202,7 +198,7 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-					deleteTeacher({ids: [row.teacherid]}).then(res=>{
+					deleteUser({ids: [row.id]}).then(res=>{
 						this.getData();
 						this.$message.success('删除成功');
 					}).catch(()=>{
@@ -215,12 +211,12 @@ export default {
         handleSelectionChange(val) {
 			this.idList = [];
 			for (var i=0;i<val.length;i++){
-				this.idList.push(val[i].teacherid)
+				this.idList.push(val[i].id)
 			}
         },
         delAllSelection() {
 			if (this.idList.length>0){
-				deleteTeacher({ids: this.idList}).then(res=>{
+				deleteUser({ids: this.idList}).then(res=>{
 					this.$message.error(res.msg);
 					this.query.pageIndex = 1;
 					this.getData();
@@ -236,7 +232,7 @@ export default {
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-			updateTeacher(this.form).then(res=>{
+			updateUser(this.form).then(res=>{
 				this.$message.success(`修改第 ${this.idx + 1} 行成功`);
 				this.getData();
 			})

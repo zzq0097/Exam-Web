@@ -36,6 +36,7 @@
                 <el-table-column prop="chapterid" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="index" label="章节" align="center"></el-table-column>
                 <el-table-column prop="chaptername" label="章节名" align="center"></el-table-column>
+                <el-table-column prop="coursename" label="所属课程" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button

@@ -33,9 +33,9 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="chapterid" label="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="courseid" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="coursename" label="课程名" align="center"></el-table-column>
-                <el-table-column prop="coursemgr" label="课程负责人" align="center"></el-table-column>
+                <el-table-column prop="teachername" label="课程负责人" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -96,9 +96,14 @@
 		
 		<!-- 添加弹出框 -->
 		<el-dialog title="添加章节" :visible.sync="add_editVisible" width="30%">
-		    <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item label="课程">
-		            <el-select v-model="add_param.courseid" placeholder="课程" @change="getChapterList">
+		    <el-form ref="form" :model="form" label-width="100px">
+				<el-form-item label="课程名">
+				    <el-input v-model="add_param.coursename"></el-input>
+				</el-form-item>
+		    </el-form>
+            <el-form ref="form" :model="form" label-width="100px">
+				<el-form-item label="课程负责人">
+				    <el-select v-model="form.courseid" placeholder="课程" @change="getChapterList">
 		                <el-option
 		                	v-for="item in course_list"
 		                	:key="item.courseid"
@@ -106,14 +111,6 @@
 		                	:value="item.courseid">
 		                </el-option>
 		            </el-select>
-		        </el-form-item>
-		        <el-form-item label="章节">
-		            <el-select v-model="add_param.index" placeholder="章节" @change="getChapterList">
-		                <el-option v-for="i in 15" :key="i" :label="i" :value="i"></el-option>
-		            </el-select>
-		        </el-form-item>
-				<el-form-item label="章节名">
-				    <el-input v-model="add_param.chaptername"></el-input>
 				</el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
@@ -133,7 +130,7 @@ import { insertChapter } from '../../../api/CourseAPI.js';
 import { updateChapter } from '../../../api/CourseAPI.js';
 import { deleteChapter } from '../../../api/CourseAPI.js';
 export default {
-    name: 'course_info_mgr',
+    name: 'teching_info_mgr',
     data() {
         return {
             query: {

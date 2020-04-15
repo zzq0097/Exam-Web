@@ -1,17 +1,17 @@
 import request from '../utils/request';
 import qs from 'qs';
 
-// 用户管理
-export const selectAdmin = query => { 
+// 授课信息管理
+export const selectTeachInfo = query => { 
     return request({
-		url: '/selectAdmin',
+		url: '/selectTeachInfo',
         method: 'get',
         params: query
     });
 };
-export const deleteAdmin = query => {
+export const deleteTeachInfo = query => {
     return request({
-		url: '/deleteAdmin',
+		url: '/deleteTeachInfo',
         method: 'post',
         params: query,
 		paramsSerializer: params => {
@@ -19,16 +19,16 @@ export const deleteAdmin = query => {
 		}
     })
 };
-export const updateAdmin = query => {
+export const updateTeachInfo = query => {
     return request({
-		url: '/updateAdmin',
-        method: 'post',
+		url: '/updateTeachInfo',
+        method: 'put',
         params: query
     });
 };
-export const insertAdmin = query => {
+export const insertTeachInfo = query => {
     return request({
-		url: '/insertAdmin',
+		url: '/insertTeachInfo',
         method: 'post',
         params: query
     });
