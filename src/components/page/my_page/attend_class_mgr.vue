@@ -18,9 +18,9 @@
                 <el-select v-model="query.courseid" placeholder="课程" @change="getData" class="handle-select mr10">
                     <el-option
                     	v-for="item in course_list"
-                    	:key="item.courseid"
-                    	:label="item.coursename"
-                    	:value="item.courseid">
+                    	:key="item.id"
+                    	:label="item.name"
+                    	:value="item.id">
                     </el-option>
                 </el-select>
                 <el-select v-model="query.classid" placeholder="班级" @change="getData" class="handle-select mr10">
@@ -124,9 +124,9 @@
                     <el-select v-model="add_param.courseid" placeholder="课程">
                         <el-option
                             v-for="item in course_list"
-                            :key="item.courseid"
-                            :label="item.coursename"
-                            :value="item.courseid">
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
                         </el-option>
                     </el-select>
 				</el-form-item>
@@ -144,9 +144,9 @@
                     <el-select v-model="add_param.teacherid">
                         <el-option
                             v-for="item in teacher_list"
-                            :key="item.teacherid"
-                            :label="item.teachername"
-                            :value="item.teacherid">
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
                         </el-option>
                     </el-select>
 		        </el-form-item>
@@ -162,7 +162,7 @@
 
 <script>
 import { selectTeachInfo, deleteTeachInfo, updateTeachInfo } from '../../../api/AttendClassAPI.js';
-import { getCourseList } from '../../../api/index.js';
+import { courseOption, teacherOption } from '../../../api/index.js';
 import { getClassList } from '../../../api/index.js';
 export default {
     name: 'teaching_info_mgr',
@@ -195,7 +195,8 @@ export default {
     },
     created() {
         this.getData();
-        getCourseList().then(res=>{ this.course_list = res });
+        courseOption().then(res=>{ this.course_list = res });
+        teacherOption().then(res=>{ this.teacher_list = res });
         getClassList().then(res=>{ this.class_list = res });
     },
     methods: {

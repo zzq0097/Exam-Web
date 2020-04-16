@@ -18,9 +18,9 @@
                 <el-select v-model="query.courseid" placeholder="课程" @change="getData" class="handle-select mr10">
                     <el-option
                     	v-for="item in course_list"
-                    	:key="item.courseid"
-                    	:label="item.coursename"
-                    	:value="item.courseid">
+                    	:key="item.id"
+                    	:label="item.name"
+                    	:value="item.id">
                     </el-option>
                 </el-select>
             </div>
@@ -92,9 +92,9 @@
 				    <el-select v-model="form.courseid" placeholder="课程" disabled class="handle-select mr10">
 				        <el-option
 				        	v-for="item in course_list"
-				        	:key="item.courseid"
-				        	:label="item.coursename"
-				        	:value="item.courseid">
+				        	:key="item.id"
+				        	:label="item.name"
+				        	:value="item.id">
 				        </el-option>om
 				    </el-select>
 				</el-form-item>
@@ -155,7 +155,7 @@
 <script>
 import { selectPaper, deletePaper, selectQuestionByPaper, updatePaper } from '../../../api/PaperAPI';
 import { getClassList } from '../../../api/index';
-import { getCourseList } from '../../../api/index';
+import { courseOption } from '../../../api/index';
 export default {
     name: 'paper',
     data() {
@@ -182,7 +182,7 @@ export default {
     },
     created() {
         this.getData();
-		this.getCourseList();
+		this.courseOption();
     },
     methods: {
 		add_paper(){
@@ -196,8 +196,8 @@ export default {
                 this.pageTotal = res.pageTotal;
             });
         },
-		getCourseList(){
-			getCourseList().then(res=>{
+		courseOption(){
+			courseOption().then(res=>{
 				console.log(res);
 				this.course_list = res;
 			});
