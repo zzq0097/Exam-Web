@@ -15,14 +15,8 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.courseid" placeholder="课程" @change="getData" class="handle-select mr10">
-                    <el-option
-                    	v-for="item in course_list"
-                    	:key="item.courseid"
-                    	:label="item.coursename"
-                    	:value="item.courseid">
-                    </el-option>
-                </el-select>
+                <el-input v-model="query.coursename" placeholder="课程名" class="handle-input mr10"></el-input>
+                <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
             </div>
             <el-table
                 :data="tableData"
@@ -68,9 +62,12 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item label="课程">
-		            <el-select v-model="form.courseid" placeholder="课程" @change="getChapterList">
+            <el-form ref="form" :model="form" label-width="90px">
+		        <el-form-item label="课程名">
+		            <el-input v-model="form.coursename"></el-input>
+		        </el-form-item>
+		        <el-form-item label="课程负责人">
+		            <el-select v-model="form.courseid" placeholder="课程">
 		                <el-option
 		                	v-for="item in course_list"
 		                	:key="item.courseid"
@@ -79,14 +76,6 @@
 		                </el-option>
 		            </el-select>
 		        </el-form-item>
-		        <el-form-item label="章节">
-		            <el-select v-model="form.index" placeholder="章节" @change="getChapterList">
-		                <el-option v-for="i in 15" :key="i" :label="i" :value="i"></el-option>
-		            </el-select>
-		        </el-form-item>
-				<el-form-item label="章节名">
-				    <el-input v-model="form.chaptername"></el-input>
-				</el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -100,10 +89,8 @@
 				<el-form-item label="课程名">
 				    <el-input v-model="add_param.coursename"></el-input>
 				</el-form-item>
-		    </el-form>
-            <el-form ref="form" :model="form" label-width="100px">
-				<el-form-item label="课程负责人">
-				    <el-select v-model="form.courseid" placeholder="课程" @change="getChapterList">
+                <el-form-item label="课程负责人">
+				    <el-select v-model="form.courseid" placeholder="课程">
 		                <el-option
 		                	v-for="item in course_list"
 		                	:key="item.courseid"
@@ -124,26 +111,22 @@
 
 <script>
 import { getCourseList } from '../../../api/index.js';
-import { getChapterList } from '../../../api/index.js';
-import { listChapter } from '../../../api/CourseAPI.js';
-import { insertChapter } from '../../../api/CourseAPI.js';
-import { updateChapter } from '../../../api/CourseAPI.js';
-import { deleteChapter } from '../../../api/CourseAPI.js';
+import { selectCourse } from '../../../api/CourseAPI.js';
+import { insertCourse } from '../../../api/CourseAPI.js';
+import { updateCourse } from '../../../api/CourseAPI.js';
+import { deleteCourse } from '../../../api/CourseAPI.js';
 export default {
     name: 'teching_info_mgr',
     data() {
         return {
             query: {
-                courseid: '',
-				chapterid: '',
-				index: '',
+                coursename: '',
                 pageIndex: 1,
                 pageSize: 10
             },
 			add_param: {
-				courseid: '',
-				chapterid: '',
-				index: '',
+                coursename: '',
+                teacherid: ''
 			},
             tableData: [],
 			idList: [],
@@ -154,12 +137,10 @@ export default {
             idx: -1,
             id: -1,
 			course_list: '',
-			chapter_list: ''
         };
     },
     created() {
         this.getData();
-		this.getCourseList();
     },
     methods: {
 		showAddDlg() {
@@ -167,24 +148,12 @@ export default {
 		},
         // 获取 easy-mock 的模拟数据
         getData() {
-            listChapter(this.query).then(res => {
+            selectCourse(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
                 this.pageTotal = res.pageTotal;
             });
         },
-		getCourseList(){
-			getCourseList().then(res=>{
-				console.log(res);
-				this.course_list = res;
-			});
-        },
-        getChapterList(){
-			getChapterList({courseid: this.form.courseid}).then(res=>{
-				console.log(res);
-				this.course_list = res;
-			});
-		},
         // 触发搜索按钮
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
@@ -197,7 +166,7 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    deleteChapter({ids: [row.chapterid]}).then(res=>{
+                    deleteCourse({ids: [row.id]}).then(res=>{
                         this.getData();
                         this.$message.success('删除成功');
                     }).catch(()=>{
@@ -215,7 +184,7 @@ export default {
         },
         delAllSelection() {
 			if (this.idList.length>0){
-				deleteChapter({ids: this.idList}).then(res=>{
+				deleteCourse({ids: this.idList}).then(res=>{
 					this.$message.error(res.msg);
 					this.query.pageIndex = 1;
 					this.getData();
@@ -230,14 +199,14 @@ export default {
         },
         // 保存编辑
 		saveEdit() {
-		    updateChapter(this.form).then(res=>{
+		    updateCourse(this.form).then(res=>{
 				this.$message.success(`修改成功`);
 				this.editVisible = false;
 				this.getData();
 			})
 		},
         saveInsert() {
-            insertChapter(this.insert_param).then(res=>{
+            insertCourse(this.insert_param).then(res=>{
 				this.$message.success(`新增成功`);
 				this.add_editVisible = false;
 				this.insert_param = '';

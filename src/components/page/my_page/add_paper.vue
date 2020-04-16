@@ -10,7 +10,7 @@
         </div>
         <div class="container">
             <div class="form-box">
-                <el-form ref="form" :model="form" label-width="80px" style="width: 700px;">
+                <el-form ref="form" :model="form" label-width="80px" style="width: 1000px;">
 					<el-form-item label="课程">
 						<el-select v-model="form.courseid" placeholder="课程" class="handle-select mr10">
 							<el-option
@@ -45,6 +45,26 @@
 							<el-table-column prop="type" label="题目类型" align="center"></el-table-column>
 							<el-table-column prop="count" label="数量" align="center"></el-table-column>
 							<el-table-column prop="score" label="分值" align="center"></el-table-column>
+							<el-table-column label="组卷条件" align="center">
+								<template slot-scope="scope">
+									<a v-if="scope.row.form.strategyDTOS.mode === 1">全随机</a>
+									<a v-else-if="scope.row.form.strategyDTOS.mode === 2">按章节/难度</a>
+									<a v-else-if="scope.row.form.strategyDTOS.mode === 3">手动组卷</a>
+								</template>
+							</el-table-column>
+							<el-table-column prop="chapterid" label="章节" align="center"></el-table-column>
+							<el-table-column prop="difficulty" label="难度" align="center"></el-table-column>
+							<el-table-column label="手动组卷" width="180" align="center">
+							<template slot-scope="scope">
+								<el-button
+									v-if="ids === ''"
+									type="text"
+									icon="el-icon-edit"
+									@click="handleEdit(scope.$index, scope.row)"
+								>查看</el-button>
+								<a v-else>无</a>
+							</template>
+							</el-table-column>
 							<el-table-column label="操作" width="180" align="center">
 								<template slot-scope="scope">
 									<el-button
@@ -111,7 +131,7 @@
 		<el-dialog title="编辑" :visible.sync="editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 				<el-form-item label="题目类型">
-					<el-select v-model="strategy.type">
+					<el-select v-model="form.strategyDTOS.type">
 						<el-option label="选择" value="选择"></el-option>
 						<el-option label="填空" value="填空"></el-option>
 						<el-option label="判断" value="判断"></el-option>
@@ -120,15 +140,42 @@
 					</el-select>
 				</el-form-item>
 		        <el-form-item label="题目数量">
-		            <el-select v-model="strategy.count">
+		            <el-select v-model="form.strategyDTOS.count">
 		            	<el-option v-for="i in 20" :key="i" :label="i" :value="i"></el-option>
 		            </el-select>
 		        </el-form-item>
 				<el-form-item label="题目分值">
-				    <el-select v-model="strategy.score">
+				    <el-select v-model="form.strategyDTOS.score">
 				    	<el-option v-for="i in 20" :key="i" :label="i" :value="i"></el-option>
 				    </el-select>
 				</el-form-item>
+				<el-form-item label="组卷方式">
+				    <el-select v-model="form.strategyDTOS.mode">
+				    	<el-option label="全随机" value=1></el-option>
+						<el-option label="按章节/难度随机组卷" value=2></el-option>
+						<el-option label="手动组卷" value=3></el-option>
+				    </el-select>
+				</el-form-item>
+				<template v-if="form.mode === 2">
+					<el-form-item label="章节">
+						<el-select v-model="form.strategyDTOS.chapterid">
+							<el-option v-for="i in 20" :key="i" :label="i" :value="i"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="难度">
+						<el-select v-model="form.strategyDTOS.difficulty">
+							<el-option v-for="i in 20" :key="i" :label="i" :value="i"></el-option>
+						</el-select>
+					</el-form-item>
+				</template>
+				<template v-else-if="form.mode === 3">
+					<el-form-item label="手动">
+						<el-select v-model="form.strategyDTOS.questionids">
+							<el-option v-for="i in 20" :key="i" :label="i" :value="i"></el-option>
+						</el-select>
+					</el-form-item>
+				</template>
+
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="editVisible = false">取 消</el-button>
@@ -169,19 +216,16 @@ export default {
                 finishtime: '',
 				pattern: '',
 				ismonitor: '',
-				// strategyDTOS:[{
-				// 	type: '',
-				// 	count: '',
-				// 	score: '',
-				// 	chapterid: '',
-				// 	difficulty: ''
-				// }],
-                questionids: []
-			},
-			strategy: {
-				type: '',
-				count: '',
-				score: ''
+				strategyDTOS:[{
+					type: '',
+					count: '',
+					score: '',
+					mode: '',
+					chapterid: '',
+					difficulty: '',
+					questionids: []
+				}],
+                
 			},
 			course_list: ''
         };
@@ -199,7 +243,7 @@ export default {
 			this.editVisible = true
 		},
 		add_strategy() {
-			this.tableData.push(this.strategy)
+			this.tableData.push(this.strategyDTOS)
 		},
 		createType() {
 			if (this.form.mode === '1') {

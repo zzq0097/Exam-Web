@@ -2,31 +2,38 @@ import request from '../utils/request';
 import qs from 'qs';
 
 // 课程管理
-export const listChapter = query => {
+export const selectCourse = query => {
 	return request({
-		url: '/listChapter',
+		url: '/selectCourse',
 		method: 'get',
 		params: query
 	});
 };
-export const insertChapter = query => {
+export const listChapter = query => {
 	return request({
-		url: '/insertChapter',
+		url: '/selecthapter',
+		method: 'get',
+		params: query
+	});
+};
+export const insertCourse = query => {
+	return request({
+		url: '/insertCourse',
 		method: 'post',
 		params: query
 	});
 };
-export const updateChapter = query => {
+export const updateCourse = query => {
 	return request({	
-		url: '/updateChapter',
+		url: '/updateCourse',
 		method: 'post',
 		params: query
 	});
 };
-export const deleteChapter = query => {
+export const deleteCourse = query => {
 	return request({	
-		url: '/deleteChapter',
-		method: 'delete',
+		url: '/deleteCourse',
+		method: 'post',
         params: query,
         paramsSerializer: params => {
 			return qs.stringify(params, { indices: false })
