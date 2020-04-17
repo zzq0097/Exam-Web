@@ -56,7 +56,7 @@
                     @current-change="handlePageChange"
                 ></el-pagination>
             </div>
-		<el-button type="primary" @click="showAddDlg">添加章节</el-button>
+		<el-button type="primary" @click="showAddDlg">添加课程</el-button>
 		<el-button type="primary">批量导入</el-button>
         </div>
 
@@ -67,12 +67,12 @@
 		            <el-input v-model="form.coursename"></el-input>
 		        </el-form-item>
 		        <el-form-item label="课程负责人">
-		            <el-select v-model="form.courseid" placeholder="课程">
+		            <el-select v-model="form.teacher_id" placeholder="教师">
 		                <el-option
-		                	v-for="item in course_list"
-		                	:key="item.courseid"
-		                	:label="item.coursename"
-		                	:value="item.courseid">
+		                	v-for="item in teacher_list"
+		                	:key="item.id"
+		                	:label="item.name"
+		                	:value="item.id">
 		                </el-option>
 		            </el-select>
 		        </el-form-item>
@@ -84,18 +84,18 @@
         </el-dialog>
 		
 		<!-- 添加弹出框 -->
-		<el-dialog title="添加章节" :visible.sync="add_editVisible" width="30%">
+		<el-dialog title="添加课程" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="100px">
 				<el-form-item label="课程名">
 				    <el-input v-model="add_param.coursename"></el-input>
 				</el-form-item>
                 <el-form-item label="课程负责人">
-				    <el-select v-model="form.courseid" placeholder="课程">
+				    <el-select v-model="add_param.teacherid" placeholder="教师">
 		                <el-option
-		                	v-for="item in course_list"
-		                	:key="item.courseid"
-		                	:label="item.coursename"
-		                	:value="item.courseid">
+		                	v-for="item in teacher_list"
+		                	:key="item.id"
+		                	:label="item.name"
+		                	:value="item.id">
 		                </el-option>
 		            </el-select>
 				</el-form-item>
@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import { getCourseList } from '../../../api/index.js';
+import { teacherOption } from '../../../api/index.js';
 import { selectCourse } from '../../../api/CourseAPI.js';
 import { insertCourse } from '../../../api/CourseAPI.js';
 import { updateCourse } from '../../../api/CourseAPI.js';
@@ -136,11 +136,13 @@ export default {
             form: {},
             idx: -1,
             id: -1,
-			course_list: '',
+            course_list: '',
+            teacher_list: ''
         };
     },
     created() {
         this.getData();
+        teacherOption().then(res=>{ this.teacher_list = res });
     },
     methods: {
 		showAddDlg() {
@@ -166,7 +168,7 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    deleteCourse({ids: [row.id]}).then(res=>{
+                    deleteCourse({ids: [row.courseid]}).then(res=>{
                         this.getData();
                         this.$message.success('删除成功');
                     }).catch(()=>{
@@ -179,7 +181,7 @@ export default {
         handleSelectionChange(val) {
 			this.idList = [];
 			for (var i=0;i<val.length;i++){
-				this.idList.push(val[i].id)
+				this.idList.push(val[i].courseid)
 			}
         },
         delAllSelection() {
@@ -206,10 +208,9 @@ export default {
 			})
 		},
         saveInsert() {
-            insertCourse(this.insert_param).then(res=>{
+            insertCourse(this.add_param).then(res=>{
 				this.$message.success(`新增成功`);
 				this.add_editVisible = false;
-				this.insert_param = '';
 				this.getData();
 			}) 
         },

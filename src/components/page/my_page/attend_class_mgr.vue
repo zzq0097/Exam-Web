@@ -26,9 +26,9 @@
                 <el-select v-model="query.classid" placeholder="班级" @change="getData" class="handle-select mr10">
                     <el-option
                     	v-for="item in class_list"
-                    	:key="item.classid"
-                    	:label="item.classname"
-                    	:value="item.classid">
+                    	:key="item.id"
+                    	:label="item.name"
+                    	:value="item.id">
                     </el-option>
                 </el-select>
                 <el-input v-model="query.name" placeholder="教师姓名" class="handle-input mr10"></el-input>
@@ -44,9 +44,9 @@
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="teachername" label="教师姓名" align="center"></el-table-column>
-				<el-table-column prop="classname" label="授课班级" align="center"></el-table-column>
-				<el-table-column prop="coursename" label="课程" align="center"></el-table-column>
+				<el-table-column prop="classname" label="上课班级" align="center"></el-table-column>
+                <el-table-column prop="coursename" label="课程" align="center"></el-table-column>
+                <el-table-column prop="teachername" label="上课教师" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -84,9 +84,9 @@
                     <el-select v-model="form.courseid" placeholder="课程">
                         <el-option
                             v-for="item in course_list"
-                            :key="item.courseid"
-                            :label="item.coursename"
-                            :value="item.courseid">
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
                         </el-option>
                     </el-select>
 				</el-form-item>
@@ -94,9 +94,9 @@
                     <el-select v-model="form.classid" placeholder="班级">
                         <el-option
                             v-for="item in class_list"
-                            :key="item.classid"
-                            :label="item.classname"
-                            :value="item.classid">
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
                         </el-option>
                     </el-select>
 				</el-form-item>
@@ -104,9 +104,9 @@
                     <el-select v-model="form.teacherid">
                         <el-option
                             v-for="item in teacher_list"
-                            :key="item.teacherid"
-                            :label="item.teachername"
-                            :value="item.teacherid">
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
                         </el-option>
                     </el-select>
 		        </el-form-item>
@@ -120,6 +120,16 @@
 		<!-- 添加弹出框 -->
 		<el-dialog title="添加授课信息" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
+                <el-form-item label="上课班级">
+                    <el-select v-model="add_param.classid" placeholder="班级">
+                        <el-option
+                            v-for="item in class_list"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+				</el-form-item>
 				<el-form-item label="课程">
                     <el-select v-model="add_param.courseid" placeholder="课程">
                         <el-option
@@ -130,17 +140,7 @@
                         </el-option>
                     </el-select>
 				</el-form-item>
-				<el-form-item label="授课班级">
-                    <el-select v-model="add_param.classid" placeholder="班级">
-                        <el-option
-                            v-for="item in class_list"
-                            :key="item.classid"
-                            :label="item.classname"
-                            :value="item.classid">
-                        </el-option>
-                    </el-select>
-				</el-form-item>
-                <el-form-item label="授课教师">
+                <el-form-item label="上课教师">
                     <el-select v-model="add_param.teacherid">
                         <el-option
                             v-for="item in teacher_list"
@@ -196,7 +196,6 @@ export default {
     created() {
         this.getData();
         courseOption().then(res=>{ this.course_list = res });
-        teacherOption().then(res=>{ this.teacher_list = res });
         getClassList().then(res=>{ this.class_list = res });
     },
     methods: {
@@ -215,6 +214,9 @@ export default {
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
+        },
+        teacherOption(){
+            teacherOption({id: add_param.courseid}).then(res=>{ this.teacher_list = res });
         },
         // 删除操作
         handleDelete(index, row) {

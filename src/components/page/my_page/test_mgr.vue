@@ -18,17 +18,17 @@
                <el-select v-model="query.courseid" placeholder="课程" @change="getData" class="handle-select mr10">
 					<el-option
 						v-for="item in course_list"
-						:key="item.courseid"
-						:label="item.coursename"
-						:value="item.courseid">
+						:key="item.id"
+						:label="item.name"
+						:value="item.id">
 					</el-option>
                 </el-select>
 				<el-select v-model="query.chapterid" placeholder="章节" @change="getData" class="handle-select mr10">
 					<el-option
 						v-for="item in chapter_list"
-						:key="item.chapterid"
-						:label="item.chaptername"
-						:value="item.chapterid">
+						:key="item.id"
+						:label="item.name"
+						:value="item.id">
 					</el-option>
 				</el-select>
 				<el-select v-model="query.difficulty" placeholder="难度" @change="getData" class="handle-select mr10">
@@ -100,9 +100,9 @@
 				    <el-select v-model="form.courseid">
 				    	<el-option
 				    		v-for="item in course_list"
-				    		:key="item.courseid"
-				    		:label="item.coursename"
-				    		:value="item.courseid">
+				    		:key="item.id"
+				    		:label="item.name"
+				    		:value="item.id">
 				    	</el-option>
 				    </el-select>
 				</el-form-item>
@@ -110,9 +110,9 @@
 				    <el-select v-model="form.chapterid">
 				    	<el-option
 				    		v-for="item in chapter_list"
-				    		:key="item.chaptereid"
-				    		:label="item.chaptername"
-				    		:value="item.chapterid">
+				    		:key="item.id"
+				    		:label="item.name"
+				    		:value="item.id">
 				    	</el-option>
 				    </el-select>
 				</el-form-item>
@@ -183,9 +183,9 @@
 				    <el-select v-model="add_param.courseid" @change="getChapterList">
 				    	<el-option
 				    		v-for="item in course_list"
-				    		:key="item.courseid"
-				    		:label="item.coursename"
-				    		:value="item.courseid">
+				    		:key="item.id"
+				    		:label="item.name"
+				    		:value="item.id">
 				    	</el-option>
 				    </el-select>
 				</el-form-item>
@@ -193,9 +193,9 @@
 				    <el-select v-model="add_param.chapterid">
 				    	<el-option
 				    		v-for="item in chapter_list"
-				    		:key="item.chaptereid"
-				    		:label="item.chaptername"
-				    		:value="item.chapterid">
+				    		:key="item.id"
+				    		:label="item.name"
+				    		:value="item.id">
 				    	</el-option>
 				    </el-select>
 				</el-form-item>
@@ -246,7 +246,7 @@
 
 <script>
 import { selectQuestion, insertQuestion, deleteQuestion, updateQuestion } from '../../../api/QuestionAPI';
-import { getCourseList } from '../../../api/index';
+import { courseOption } from '../../../api/index';
 import { getChapterList } from '../../../api/index';
 export default {
     name: 'test_mgr',
@@ -288,8 +288,7 @@ export default {
     },
     created() {
         this.getData();
-        getCourseList().then(res=>{this.course_list = res});
-        
+        courseOption().then(res=>{this.course_list = res});
     },
     methods: {
 		showAddDlg() {

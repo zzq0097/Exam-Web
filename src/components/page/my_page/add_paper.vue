@@ -12,7 +12,7 @@
             <div class="form-box">
                 <el-form ref="form" :model="form" label-width="80px" style="width: 1000px;">
 					<el-form-item label="课程">
-						<el-select v-model="form.courseid" placeholder="课程" class="handle-select mr10">
+						<el-select v-model="paper.courseid" placeholder="课程" class="handle-select mr10">
 							<el-option
 								v-for="item in course_list"
 								:key="item.id"
@@ -212,7 +212,7 @@
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="add_editVisible = false">取 消</el-button>
-		        <el-button type="primary" @click="add_strategy">确 定</el-button>
+		        <el-button type="primary" @click="add_strategy(strategy)">确 定</el-button>
 		    </span>
 		</el-dialog>
     </div>
@@ -243,6 +243,7 @@ export default {
 			datas: generateData(),
 			form: {},
 			paper:{
+				courseid: '',
 				starttime: '',
                 finishtime: '',
 				pattern: '',
@@ -270,10 +271,18 @@ export default {
 				this.$message.success('提交成功！');
 			})
         },
-		add_strategy() {
+		add_strategy(strategy) {
 			this.add_editVisible = false;
 			this.paper.strategyDTOS.push(this.strategy);
-			console.log(this.paper);
+			this.strategy = {
+				type: '',
+				count: '',
+				score: '',
+				mode: '',
+				chapterid: '',
+				difficulty: '',
+				questionids: []
+			}
 		},
 		handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
@@ -286,14 +295,14 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-					deletePaper({ids: [row.paperId]}).then(res=>{
+					deletePaper().then(res=>{
 						this.getData();
 						this.$message.success('删除成功');
 					})
                 })
                 .catch(() => {});
         },
-        // 编辑操作
+        // 编辑操作 
         handleEdit(index, row) {
             this.idx = index;
             this.form = row;

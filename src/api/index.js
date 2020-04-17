@@ -11,28 +11,20 @@ export const login = query => {
 // ---------------------------------------- 获取班级下拉框列表
 export const getClassList = query => {
     return request({
-		url: '/getClassList',
+		url: '/classOption',
         method: 'get',
         params: query
     });
 };
-// ---------------------------------------- 获取课程下拉框列表
-export const getCourseList = query => {
-    return request({  
-		url: '/getCourseList',
-        method: 'get',
-        params: query
-    });
-};
-// ---------------------------------------- 获取章节index下拉框列表
+// ---------------------------------------- 章节下拉框列表
 export const getChapterList = query => {
 	return request({
-		url: '/getChapterList',
+		url: '/chapterOption',
 		method: 'get',
 		params: query
 	});
 };
-// ---------------------------------------- 获取黑名单下拉框列表
+// ---------------------------------------- 名单下拉框列表
 export const getBlackListTypes = query => {
 	return request({
 		url: '/getBlackListTypes',
@@ -40,7 +32,7 @@ export const getBlackListTypes = query => {
 		params: query
 	});
 };
-// 老师下拉框
+// ---------------------------------------- 老师下拉框
 export const teacherOption = query => {
 	return request({
 		url: '/teacherOption',
@@ -48,6 +40,7 @@ export const teacherOption = query => {
 		params: query
 	});
 };
+// ---------------------------------------- 课程下拉框
 export const courseOption = query => {
 	return request({
 		url: '/courseOption',

@@ -18,9 +18,9 @@
                 <el-select v-model="query.courseid" placeholder="课程" @change="getData" class="handle-select mr10">
                     <el-option
                     	v-for="item in course_list"
-                    	:key="item.courseid"
-                    	:label="item.coursename"
-                    	:value="item.courseid">
+                    	:key="item.id"
+                    	:label="item.name"
+                    	:value="item.id">
                     </el-option>
                 </el-select>
             </div>
@@ -71,17 +71,17 @@
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px">
 		        <el-form-item label="课程">
-		            <el-select v-model="form.courseid" placeholder="课程" @change="getChapterList">
+		            <el-select v-model="form.courseid" placeholder="课程">
 		                <el-option
 		                	v-for="item in course_list"
-		                	:key="item.courseid"
-		                	:label="item.coursename"
-		                	:value="item.courseid">
+		                	:key="item.id"
+		                	:label="item.name"
+		                	:value="item.id">
 		                </el-option>
 		            </el-select>
 		        </el-form-item>
 		        <el-form-item label="章节">
-		            <el-select v-model="form.index" placeholder="章节" @change="getChapterList">
+		            <el-select v-model="form.index" placeholder="章节">
 		                <el-option v-for="i in 15" :key="i" :label="i" :value="i"></el-option>
 		            </el-select>
 		        </el-form-item>
@@ -99,17 +99,17 @@
 		<el-dialog title="添加章节" :visible.sync="add_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
 		        <el-form-item label="课程">
-		            <el-select v-model="add_param.courseid" placeholder="课程" @change="getChapterList">
+		            <el-select v-model="add_param.courseid" placeholder="课程">
 		                <el-option
 		                	v-for="item in course_list"
-		                	:key="item.courseid"
-		                	:label="item.coursename"
-		                	:value="item.courseid">
+		                	:key="item.id"
+		                	:label="item.name"
+		                	:value="item.id">
 		                </el-option>
 		            </el-select>
 		        </el-form-item>
 		        <el-form-item label="章节">
-		            <el-select v-model="add_param.index" placeholder="章节" @change="getChapterList">
+		            <el-select v-model="add_param.index" placeholder="章节">
 		                <el-option v-for="i in 15" :key="i" :label="i" :value="i"></el-option>
 		            </el-select>
 		        </el-form-item>
@@ -127,12 +127,11 @@
 </template>
 
 <script>
-import { getCourseList } from '../../../api/index.js';
-import { getChapterList } from '../../../api/index.js';
-import { listChapter } from '../../../api/CourseAPI.js';
-import { insertChapter } from '../../../api/CourseAPI.js';
-import { updateChapter } from '../../../api/CourseAPI.js';
-import { deleteChapter } from '../../../api/CourseAPI.js';
+import { courseOption } from '../../../api/index.js';
+import { listChapter } from '../../../api/ChapterAPI.js';
+import { insertChapter } from '../../../api/ChapterAPI.js';
+import { updateChapter } from '../../../api/ChapterAPI.js';
+import { deleteChapter } from '../../../api/ChapterAPI.js';
 export default {
     name: 'course_info_mgr',
     data() {
@@ -145,9 +144,9 @@ export default {
                 pageSize: 10
             },
 			add_param: {
-				courseid: '',
-				chapterid: '',
-				index: '',
+				chaptername: '',
+                index: '',
+                courseid: ''
 			},
             tableData: [],
 			idList: [],
@@ -157,13 +156,12 @@ export default {
             form: {},
             idx: -1,
             id: -1,
-			course_list: '',
-			chapter_list: ''
+			course_list: ''
         };
     },
     created() {
         this.getData();
-		this.getCourseList();
+		courseOption().then(res=>{ this.course_list = res })
     },
     methods: {
 		showAddDlg() {
@@ -177,18 +175,6 @@ export default {
                 this.pageTotal = res.pageTotal;
             });
         },
-		getCourseList(){
-			getCourseList().then(res=>{
-				console.log(res);
-				this.course_list = res;
-			});
-        },
-        getChapterList(){
-			getChapterList({courseid: this.form.courseid}).then(res=>{
-				console.log(res);
-				this.course_list = res;
-			});
-		},
         // 触发搜索按钮
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
@@ -241,10 +227,9 @@ export default {
 			})
 		},
         saveInsert() {
-            insertChapter(this.insert_param).then(res=>{
+            insertChapter(this.add_param).then(res=>{
 				this.$message.success(`新增成功`);
 				this.add_editVisible = false;
-				this.insert_param = '';
 				this.getData();
 			}) 
         },

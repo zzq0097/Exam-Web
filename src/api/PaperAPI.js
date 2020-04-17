@@ -29,7 +29,7 @@ export const insertPaper = query => {
     return request({
 		url: '/formPaper',
         method: 'post',
-        params: query
+        data: query
     });
 };
 export const getTestList = query => {

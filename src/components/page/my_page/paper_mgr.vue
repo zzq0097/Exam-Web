@@ -15,9 +15,17 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.courseid" placeholder="课程" @change="getData" class="handle-select mr10">
+                <el-select v-model="query.courseid" placeholder="课程" @change="getData()" class="handle-select mr10">
                     <el-option
                     	v-for="item in course_list"
+                    	:key="item.id"
+                    	:label="item.name"
+                    	:value="item.id">
+                    </el-option>
+                </el-select>
+                <el-select v-model="query.classid" placeholder="班级" @change="getData()" class="handle-select mr10">
+                    <el-option
+                    	v-for="item in class_list"
                     	:key="item.id"
                     	:label="item.name"
                     	:value="item.id">
@@ -95,7 +103,7 @@
 				        	:key="item.id"
 				        	:label="item.name"
 				        	:value="item.id">
-				        </el-option>om
+				        </el-option>
 				    </el-select>
 				</el-form-item>
                 <el-form-item label="考试模式">
@@ -166,7 +174,6 @@ export default {
                 pageIndex: 1,
                 pageSize: 10
             },
-			test_list: [],
             tableData: [],
 			idList: [],
             editVisible: false,
@@ -177,6 +184,7 @@ export default {
             idx: -1,
             id: -1,
             course_list: '',
+            class_list: '',
             test_list: ''
         };
     },

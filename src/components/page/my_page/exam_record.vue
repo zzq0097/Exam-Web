@@ -12,17 +12,17 @@
                 <el-select v-model="query.courseid" placeholder="课程" class="handle-select mr10">
                     <el-option
                     	v-for="item in course_list"
-                    	:key="item.courseid"
-                    	:label="item.coursename"
-                    	:value="item.courseid">
+                    	:key="item.id"
+                    	:label="item.name"
+                    	:value="item.id">
                     </el-option>
                 </el-select>
                 <el-select v-model="query.classid" placeholder="班级" class="handle-select mr10">
                     <el-option
                     	v-for="item in class_list"
-                    	:key="item.classid"
-                    	:label="item.classname"
-                    	:value="item.classid">
+                    	:key="item.id"
+                    	:label="item.name"
+                    	:value="item.id">
                     </el-option>
                 </el-select>
                 <el-input v-model="query.name" placeholder="学生姓名" class="handle-input mr10"></el-input>
@@ -112,7 +112,7 @@
 
 <script>
 import { getRecordList, getTestsByRecordId } from '../../../api/RecordAPI.js';
-import { getCourseList, getClassList } from '../../../api/index.js';
+import { courseOption, getClassList } from '../../../api/index.js';
 export default {
     name: 'user',
     data() {
@@ -139,7 +139,7 @@ export default {
     },
     created() {
         this.getData();
-        getCourseList().then(res=>{ this.course_list = res });
+        courseOption().then(res=>{ this.course_list = res });
         getClassList().then(res=>{ this.class_list = res });
     },
     methods: {
