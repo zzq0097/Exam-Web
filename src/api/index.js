@@ -48,3 +48,11 @@ export const courseOption = query => {
 		params: query
 	});
 };
+// ---------------------------------------- 授课信息下拉框
+export const teachOption = query => {
+	return request({
+		url: '/teachOption',
+		method: 'get',
+		params: query
+	});
+};

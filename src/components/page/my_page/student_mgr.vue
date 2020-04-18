@@ -18,9 +18,9 @@
                 <el-select v-model="query.classid" placeholder="班级" @change="query.name = '',getData()" class="handle-input mr10">
                     <el-option
                         v-for="item in class_list"
-                        :key="item.classid"
-                        :label="item.classname"
-                        :value="item.classid">
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
                     </el-option>
                 </el-select>
                 <el-input v-model="query.name" placeholder="姓名" class="handle-input mr10"></el-input>
@@ -90,9 +90,9 @@
 				    <el-select v-model="form.classname">
 				    	<el-option
 				    		v-for="item in class_list"
-				    		:key="item.classid"
-				    		:label="item.classname"
-				    		:value="item.classname">
+				    		:key="item.id"
+				    		:label="item.name"
+				    		:value="item.name">
 				    	</el-option>
 				    </el-select>
 				</el-form-item>
@@ -122,9 +122,9 @@
 				    <el-select v-model="add_param.classid">
 						<el-option
 							v-for="item in class_list"
-							:key="item.classid"
-							:label="item.classname"
-							:value="item.classid">
+							:key="item.id"
+							:label="item.name"
+							:value="item.id">
 						</el-option>
 				    </el-select>
 				</el-form-item>

@@ -43,10 +43,9 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="teachid" label="ID" width="55" align="center"></el-table-column>
 				<el-table-column prop="classname" label="上课班级" align="center"></el-table-column>
-                <el-table-column prop="coursename" label="课程" align="center"></el-table-column>
-                <el-table-column prop="teachername" label="上课教师" align="center"></el-table-column>
+                <el-table-column prop="teachInfo" label="上课教师和课程" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -79,18 +78,8 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px">
-				<el-form-item label="课程">
-                    <el-select v-model="form.courseid" placeholder="课程">
-                        <el-option
-                            v-for="item in course_list"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id">
-                        </el-option>
-                    </el-select>
-				</el-form-item>
-				<el-form-item label="授课班级">
+            <el-form ref="form" :model="form" label-width="120px">
+                <el-form-item label="上课班级">
                     <el-select v-model="form.classid" placeholder="班级">
                         <el-option
                             v-for="item in class_list"
@@ -100,10 +89,10 @@
                         </el-option>
                     </el-select>
 				</el-form-item>
-                <el-form-item label="授课教师">
-                    <el-select v-model="form.teacherid">
+                <el-form-item label="上课教师和课程">
+                    <el-select v-model="form.teachid">
                         <el-option
-                            v-for="item in teacher_list"
+                            v-for="item in teach_list"
                             :key="item.id"
                             :label="item.name"
                             :value="item.id">
@@ -119,7 +108,7 @@
 		
 		<!-- 添加弹出框 -->
 		<el-dialog title="添加授课信息" :visible.sync="add_editVisible" width="30%">
-		    <el-form ref="form" :model="form" label-width="70px">
+		    <el-form ref="form" :model="form" label-width="120px">
                 <el-form-item label="上课班级">
                     <el-select v-model="add_param.classid" placeholder="班级">
                         <el-option
@@ -130,20 +119,10 @@
                         </el-option>
                     </el-select>
 				</el-form-item>
-				<el-form-item label="课程">
-                    <el-select v-model="add_param.courseid" placeholder="课程">
+                <el-form-item label="上课教师和课程">
+                    <el-select v-model="add_param.teachid">
                         <el-option
-                            v-for="item in course_list"
-                            :key="item.id"
-                            :label="item.name"
-                            :value="item.id">
-                        </el-option>
-                    </el-select>
-				</el-form-item>
-                <el-form-item label="上课教师">
-                    <el-select v-model="add_param.teacherid">
-                        <el-option
-                            v-for="item in teacher_list"
+                            v-for="item in teach_list"
                             :key="item.id"
                             :label="item.name"
                             :value="item.id">
@@ -153,7 +132,7 @@
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="add_editVisible = false">取 消</el-button>
-		        <el-button type="primary" @click="saveEdit">确 定</el-button>
+		        <el-button type="primary" @click="saveInsert">确 定</el-button>
 		    </span>
 		</el-dialog>
 		
@@ -161,8 +140,8 @@
 </template>
 
 <script>
-import { selectTeachInfo, deleteTeachInfo, updateTeachInfo } from '../../../api/AttendClassAPI.js';
-import { courseOption, teacherOption } from '../../../api/index.js';
+import { selectGetClass,updateGetClass,insertGetClass,deleteGetClass } from '../../../api/AttendClassAPI.js';
+import { courseOption, teachOption } from '../../../api/index.js';
 import { getClassList } from '../../../api/index.js';
 export default {
     name: 'teaching_info_mgr',
@@ -176,9 +155,8 @@ export default {
                 pageSize: 10
             },
             add_param: {
-                courseid: '',
                 classid: '',
-                teacherid: ''
+                teachid: ''
             },
             tableData: [],
 			idList: [],
@@ -190,13 +168,14 @@ export default {
             id: -1,
             course_list: '',
             class_list: '',
-            teacher_list: ''
+            teach_list: ''
         };
     },
     created() {
         this.getData();
         courseOption().then(res=>{ this.course_list = res });
         getClassList().then(res=>{ this.class_list = res });
+        teachOption().then(res=>{ this.teach_list = res });
     },
     methods: {
 		showAddDlg() {
@@ -204,7 +183,7 @@ export default {
 		},
         // 获取 easy-mock 的模拟数据
         getData() {
-            selectTeachInfo(this.query).then(res => {
+            selectGetClass(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.list;
                 this.pageTotal = res.pageTotal;
@@ -215,9 +194,6 @@ export default {
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
         },
-        teacherOption(){
-            teacherOption({id: add_param.courseid}).then(res=>{ this.teacher_list = res });
-        },
         // 删除操作
         handleDelete(index, row) {
             // 二次确认删除
@@ -225,7 +201,7 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-					deleteTeachInfo({ids: [row.id]}).then(res=>{
+					deleteGetClass({ids: [row.id]}).then(res=>{
 						this.getData();
 						this.$message.success('删除成功');
 					}).catch(()=>{
@@ -242,7 +218,7 @@ export default {
         },
         delAllSelection() {
 			if (this.idList.length>0){
-				deleteTeachInfo({ids: this.idList}).then(res=>{
+				deleteGetClass({ids: this.idList}).then(res=>{
 					this.$message.error(res.msg);
 					this.query.pageIndex = 1;
 					this.getData();
@@ -258,8 +234,15 @@ export default {
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-			updateTeachInfo(this.form).then(res=>{
-				this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+			updateGetClass(this.form).then(res=>{
+				this.$message.success(`修改成功`);
+				this.getData();
+			})
+        },
+        saveInsert(){
+            this.add_editVisible = false;
+			insertGetClass(this.add_param).then(res=>{
+                this.$message.success(`添加成功`);
 				this.getData();
 			})
         },

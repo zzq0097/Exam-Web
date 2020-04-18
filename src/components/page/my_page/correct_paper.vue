@@ -124,7 +124,9 @@ export default {
             course_list: '',
             class_list: '',
             test_list: '',
-            stu_score: []
+            stu_score: [],
+            answerid_list: [],
+            answerscore_list: []
         };
     },
     created() {
@@ -158,7 +160,7 @@ export default {
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-            console.log(this.stu_score);
+            console.log(this.test_list);
             submitScore({score: this.stu_score}).then(res=>{
                 this.$message.success('批改提交成功');
             })

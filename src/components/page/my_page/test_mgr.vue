@@ -51,12 +51,20 @@
                 <el-table-column prop="subjectid" label="ID" width="55" align="center"></el-table-column>
 				<el-table-column prop="type" label="题目类型" width="80" align="center"></el-table-column>
                 <el-table-column prop="content" label="题目"></el-table-column>
-				<el-table-column label="选项">
+				<el-table-column label="选项" align="center">
                     <template slot-scope="scope">
-                        <el-tag>A</el-tag> {{ scope.row.option1 }}
-                        <el-tag>B</el-tag> {{ scope.row.option2 }}
-                        <el-tag>C</el-tag> {{ scope.row.option3 }}
-                        <el-tag>D</el-tag> {{ scope.row.option4 }}
+                        <span v-if="scope.row.type === '选择'">
+                            <el-tag>A</el-tag> {{ scope.row.option1 }}
+                            <el-tag>B</el-tag> {{ scope.row.option2 }}
+                            <el-tag>C</el-tag> {{ scope.row.option3 }}
+                            <el-tag>D</el-tag> {{ scope.row.option4 }}
+                        </span>
+                        <span v-else-if="scope.row.type === '判断'">
+                            对/错
+                        </span>
+                        <span v-else>
+                            无
+                        </span>
                     </template>
                 </el-table-column>
 				<el-table-column prop="answer" label="答案" width="55" align="center"></el-table-column>
