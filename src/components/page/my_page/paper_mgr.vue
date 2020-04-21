@@ -142,7 +142,10 @@
 		<el-dialog title="详细信息" :visible.sync="detailInfo" width="60%">
             <hr/>
 		    <el-form ref="form" :model="form" v-for="item in test_list" :key="item.test_id" label-width="70px">
-		        <el-form-item label="题目："> {{ item.content }} </el-form-item>
+		        <el-form-item label="题目：">
+                    <el-tag>{{item.type}}</el-tag>
+                    {{ item.content }} 
+                </el-form-item>
                 <template v-if="item.type === '选择'">
                     <el-form-item label="选项A："> {{ item.option1 }} </el-form-item>
                     <el-form-item label="选项B："> {{ item.option2 }} </el-form-item>

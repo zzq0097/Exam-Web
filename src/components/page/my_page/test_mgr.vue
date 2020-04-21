@@ -311,14 +311,14 @@ export default {
                 this.tableData = res.list;
                 this.pageTotal = res.pageTotal;
 				if(this.query.courseid !== ''){
-					getChapterList({courseid: this.query.courseid}).then(res=>{
+					getChapterList({id: this.query.courseid}).then(res=>{
 						this.chapter_list = res
 					})
 				}
             });
         },
         getChapterList(){
-			getChapterList({courseid :this.add_param.courseid}).then(res=>{
+			getChapterList({id :this.add_param.courseid}).then(res=>{
 				this.chapter_list = res;
 			});
         },

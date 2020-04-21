@@ -12,7 +12,7 @@
             <div class="form-box">
                 <el-form ref="form" :model="form" label-width="80px" style="width: 1000px;">
 					<el-form-item label="课程">
-						<el-select v-model="paper.courseid" placeholder="课程" class="handle-select mr10">
+						<el-select v-model="paper.courseid" placeholder="课程" @change="chapterOption" class="handle-select mr10">
 							<el-option
 								v-for="item in course_list"
 								:key="item.id"
@@ -56,12 +56,13 @@
 							<el-table-column prop="difficulty" label="难度" align="center"></el-table-column>
 							<el-table-column label="手动组卷" width="180" align="center">
 							<template slot-scope="scope">
-								<el-button
+								<a v-if="scope.row.mode === '3'">{{scope.row.questionids}}</a>
+								<!-- <el-button
 									v-if="scope.row.mode === '3'"
 									type="text"
 									icon="el-icon-edit"
 									@click="handleEdit(scope.$index, scope.row)"
-								>查看</el-button>
+								>查看</el-button> -->
 								<a v-else>无</a>
 							</template>
 							</el-table-column>
@@ -193,33 +194,55 @@
 				<template v-if="strategy.mode === '2'">
 					<el-form-item label="章节">
 						<el-select v-model="strategy.chapterid">
-							<el-option v-for="i in 20" :key="i" :label="i" :value="i"></el-option>
+							<el-option
+								v-for="item in chapter_list"
+								:key="item.id"
+								:label="item.name"
+								:value="item.id">
+							</el-option>
 						</el-select>
 					</el-form-item>
 					<el-form-item label="难度">
 						<el-select v-model="strategy.difficulty">
-							<el-option v-for="i in 20" :key="i" :label="i" :value="i"></el-option>
+							<el-option label="简单" value="简单"></el-option>
+							<el-option label="一般" value="一般"></el-option>
+							<el-option label="困难" value="困难"></el-option>
 						</el-select>
 					</el-form-item>
 				</template>
 				<template v-else-if="strategy.mode === '3'">
-					<el-form-item label="手动">
-						<el-select v-model="strategy.questionids">
-							<el-option v-for="i in 20" :key="i" :label="i" :value="i"></el-option>
+					<el-form-item label="选择章节">
+						<el-select v-model="chapterid" @change="questionOption">
+							<el-option
+								v-for="item in chapter_list"
+								:key="item.id"
+								:label="item.name"
+								:value="item.id">
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="选择题目">
+						<el-select multiple filterable v-model="strategy.questionids">
+							<el-option
+								v-for="item in question_list"
+								:key="item.id"
+								:label="item.name"
+								:value="item.id">
+							</el-option>
 						</el-select>
 					</el-form-item>
 				</template>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="add_editVisible = false">取 消</el-button>
-		        <el-button type="primary" @click="add_strategy(strategy)">确 定</el-button>
+		        <el-button type="primary" @click="add_strategy">确 定</el-button>
 		    </span>
 		</el-dialog>
     </div>
 </template>
 
 <script>
-import { courseOption } from '../../../api/index';
+import { courseOption,getChapterList,questionOption } from '../../../api/index';
 import { updatePaper, insertPaper } from '../../../api/PaperAPI';
 export default {
     name: 'add_paper',
@@ -259,7 +282,10 @@ export default {
 				difficulty: '',
 				questionids: []
 			},
-			course_list: ''
+			course_list: '',
+			chapter_list: '',
+			question_list: '',
+			chapterid: ''
         };
 	},
 	created() {
@@ -271,9 +297,10 @@ export default {
 				this.$message.success('提交成功！');
 			})
         },
-		add_strategy(strategy) {
+		add_strategy() {
 			this.add_editVisible = false;
 			this.paper.strategyDTOS.push(this.strategy);
+			console.log(this.strategy);
 			this.strategy = {
 				type: '',
 				count: '',
@@ -283,6 +310,12 @@ export default {
 				difficulty: '',
 				questionids: []
 			}
+		},
+		chapterOption(){
+			getChapterList({id: this.paper.courseid}).then(res=>{ this.chapter_list = res })
+		},
+		questionOption(){
+			questionOption({id: this.chapterid}).then(res=>{ this.question_list = res })
 		},
 		handleSearch() {
             this.$set(this.query, 'pageIndex', 1);

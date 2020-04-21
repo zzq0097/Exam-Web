@@ -56,3 +56,11 @@ export const teachOption = query => {
 		params: query
 	});
 };
+// ---------------------------------------- 授课信息下拉框
+export const questionOption = query => {
+	return request({
+		url: '/questionOption',
+		method: 'get',
+		params: query
+	});
+};

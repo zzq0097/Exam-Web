@@ -40,6 +40,8 @@
 				<el-table-column prop="className" label="班级" align="center"></el-table-column>
                 <el-table-column prop="courseName" label="课程" align="center"></el-table-column>
                 <el-table-column prop="startTime" label="考试时间" align="center"></el-table-column>
+                <el-table-column prop="grade" label="考生得分" align="center"></el-table-column>
+                <el-table-column prop="value" label="试卷总分" align="center"></el-table-column>
 				<el-table-column label="批改状态" align="center">
 					<template slot-scope="scope">
 					    <el-tag
