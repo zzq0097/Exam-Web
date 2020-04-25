@@ -14,7 +14,7 @@
                     <el-option key="2" label="Python | 2019-下" value="学生"></el-option>
 					<el-option key="3" label="Java | 2019-下" value="班级"></el-option>
                 </el-select>
-				<el-select v-model="query2" placeholder="班级" class="handle-select mr10">
+				<el-select v-model="query.name" placeholder="班级" class="handle-select mr10">
 					<el-option key="1" label="全年级" value="班级"></el-option>
 				    <el-option key="2" label="RB软工网161" value="教师"></el-option>
 				    <el-option key="3" label="RB软工网162" value="学生"></el-option>
@@ -134,7 +134,6 @@ export default {
                 pageIndex: 1,
                 pageSize: 10
             },
-			query2: {},
             tableData: [],
             multipleSelection: [],
             delList: [],

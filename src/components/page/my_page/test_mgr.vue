@@ -105,7 +105,7 @@
         <el-dialog title="编辑" :visible.sync="editVisible" width="70%">
             <el-form ref="form" :model="form" label-width="70px">
 				<el-form-item label="所属课程">
-				    <el-select v-model="form.courseid">
+				    <el-select v-model="form.courseid" @change="getChapterList(form.courseid)">
 				    	<el-option
 				    		v-for="item in course_list"
 				    		:key="item.id"
@@ -137,22 +137,35 @@
 		            <el-input v-model="form.content"></el-input>
 		        </el-form-item>
                 <template v-if="form.type === '选择'">
-                    <el-form-item label="选项1">
+                    <el-form-item label="选项A">
                         <el-input v-model="form.option1"></el-input>
                     </el-form-item>
-                    <el-form-item label="选项2">
+                    <el-form-item label="选项B">
                         <el-input v-model="form.option2"></el-input>
                     </el-form-item>
-                    <el-form-item label="选项3">
+                    <el-form-item label="选项C">
                         <el-input v-model="form.option3"></el-input>
                     </el-form-item>
-                    <el-form-item label="选项4">
+                    <el-form-item label="选项D">
                         <el-input v-model="form.option4"></el-input>
                     </el-form-item>
+                    <el-form-item label="答案">
+                        <el-radio-group v-model="form.answer">
+                            <el-radio label="A"></el-radio>
+                            <el-radio label="B"></el-radio>
+                            <el-radio label="C"></el-radio>
+                            <el-radio label="D"></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
                 </template>
-				<el-form-item label="答案">
-				    <el-input v-model="form.answer"></el-input>
-				</el-form-item>
+                <template v-if="form.type === '判断'">
+                    <el-form-item label="答案">
+                        <el-radio-group v-model="form.answer">
+                            <el-radio label="对"></el-radio>
+                            <el-radio label="错"></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                </template>
                 <el-form-item label="难度">
 				    <el-select v-model="form.difficulty">
 		            	<el-option label="1" value="1"></el-option>
@@ -185,10 +198,10 @@
 		</el-dialog>
 		
 		<!-- 添加弹出框 -->
-		<el-dialog title="添加用户" :visible.sync="add_editVisible" width="30%">
+		<el-dialog title="添加" :visible.sync="add_editVisible" width="50%">
 		    <el-form ref="form" :model="form" label-width="70px">
 				<el-form-item label="所属课程">
-				    <el-select v-model="add_param.courseid" @change="getChapterList">
+				    <el-select v-model="add_param.courseid" @change="getChapterList(add_param.courseid)">
 				    	<el-option
 				    		v-for="item in course_list"
 				    		:key="item.id"
@@ -217,25 +230,49 @@
 		            </el-select>
 		        </el-form-item>
 		        <el-form-item label="题目">
-		            <el-input v-model="add_param.content"></el-input>
+                    <!-- <quill-editor 
+                        v-if="add_param.type === '简答'" 
+                        ref="myTextEditor" 
+                        v-model="add_param.content">
+                    </quill-editor> -->
+                    <template v-if="add_param.type === '简答'">
+                        <div>
+                            <editor-bar v-model="add_param.content" :isClear="isClear" @change="change"></editor-bar>
+                        </div>
+                    </template>
+		            <el-input v-else v-model="add_param.content"></el-input>
 		        </el-form-item>
+                
                 <template v-if="add_param.type === '选择'">
-                    <el-form-item label="选项1">
+                    <el-form-item label="选项A">
                         <el-input v-model="add_param.option1"></el-input>
                     </el-form-item>
-                    <el-form-item label="选项2">
+                    <el-form-item label="选项B">
                         <el-input v-model="add_param.option2"></el-input>
                     </el-form-item>
-                    <el-form-item label="选项3">
+                    <el-form-item label="选项C">
                         <el-input v-model="add_param.option3"></el-input>
                     </el-form-item>
-                    <el-form-item label="选项4">
+                    <el-form-item label="选项D">
                         <el-input v-model="add_param.option4"></el-input>
                     </el-form-item>
+                    <el-form-item label="答案">
+                        <el-radio-group v-model="add_param.answer">
+                            <el-radio label="A"></el-radio>
+                            <el-radio label="B"></el-radio>
+                            <el-radio label="C"></el-radio>
+                            <el-radio label="D"></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
                 </template>
-				<el-form-item label="答案">
-				    <el-input v-model="add_param.answer"></el-input>
-				</el-form-item>
+                <template v-if="add_param.type === '判断'">
+                    <el-form-item label="答案">
+                        <el-radio-group v-model="add_param.answer">
+                            <el-radio label="对"></el-radio>
+                            <el-radio label="错"></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                </template>
                 <el-form-item label="难度">
 				    <el-select v-model="add_param.difficulty">
 		            	<el-option label="1" value="1"></el-option>
@@ -256,6 +293,7 @@
 import { selectQuestion, insertQuestion, deleteQuestion, updateQuestion } from '../../../api/QuestionAPI';
 import { courseOption } from '../../../api/index';
 import { getChapterList } from '../../../api/index';
+import EditorBar from '../../common/myEditor';
 export default {
     name: 'test_mgr',
     data() {
@@ -291,14 +329,23 @@ export default {
             idx: -1,
             id: -1,
 			course_list: '',
-            chapter_list: ''
+            chapter_list: '',
+            editor: null,
+            editorContent: '',
+            isClear: false,
         };
     },
     created() {
         this.getData();
         courseOption().then(res=>{this.course_list = res});
     },
+    components: {
+        EditorBar
+    },
     methods: {
+        change(val) {
+            this.add_param.content = val
+        },
 		showAddDlg() {
 			this.add_editVisible = true
 		},
@@ -317,8 +364,8 @@ export default {
 				}
             });
         },
-        getChapterList(){
-			getChapterList({id :this.add_param.courseid}).then(res=>{
+        getChapterList(courseid){
+			getChapterList({id :courseid}).then(res=>{
 				this.chapter_list = res;
 			});
         },
@@ -388,7 +435,7 @@ export default {
             this.$set(this.query, 'pageIndex', val);
             this.getData();
         }
-    }
+    },
 };
 </script>
 

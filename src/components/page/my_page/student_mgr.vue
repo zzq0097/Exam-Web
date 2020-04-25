@@ -87,12 +87,12 @@
 				    <el-input v-model="form.tel"></el-input>
 				</el-form-item>
 				<el-form-item label="班级">
-				    <el-select v-model="form.classname">
+				    <el-select v-model="form.classid">
 				    	<el-option
 				    		v-for="item in class_list"
 				    		:key="item.id"
 				    		:label="item.name"
-				    		:value="item.name">
+				    		:value="item.id">
 				    	</el-option>
 				    </el-select>
 				</el-form-item>
@@ -265,7 +265,7 @@ export default {
         saveEdit() {
             this.editVisible = false;
 			updateUser(this.form).then(res=>{
-				this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+				this.$message.success(`修改成功`);
 				this.getData();
 			})
         },

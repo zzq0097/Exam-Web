@@ -247,23 +247,9 @@ import { updatePaper, insertPaper } from '../../../api/PaperAPI';
 export default {
     name: 'add_paper',
     data() {
-		  const generateData = _ => {
-			const data = [];
-			for (let i = 1; i <= 15; i++) {
-			  data.push({
-				key: i,
-				label: `备选项 ${ i }`,
-				disabled: i % 4 === 0
-			  });
-			}
-			return data;
-		  };
         return {
 			editVisible: false,
 			add_editVisible: false,
-			value: [1, 4],
-			data: '',
-			datas: generateData(),
 			form: {},
 			paper:{
 				courseid: '',
