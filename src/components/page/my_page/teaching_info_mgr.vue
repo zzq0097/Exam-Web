@@ -38,7 +38,7 @@
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="teachername" label="教师姓名" align="center"></el-table-column>
 				<el-table-column prop="coursename" label="所授课程" align="center"></el-table-column>
-                <el-table-column label="操作" width="180" align="center">
+                <el-table-column label="操作" width="300" align="center">
                     <template slot-scope="scope">
                         <el-button
                             type="text"
@@ -51,6 +51,27 @@
                             class="red"
                             @click="handleDelete(scope.$index, scope.row)"
                         >删除</el-button>
+                        <el-button
+                            type="text"
+                            icon="el-icon-edit"
+                            @click="handleInsert(scope.$index, scope.row)"
+                        >添加上课班级</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column label="上课班级" align="center">
+                    <template slot-scope="scope">
+                        <p v-for="item in scope.row.classes" :key="item.classid">
+                            {{ item.classname }}
+                        </p>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="120" align="center">
+                    <template slot-scope="scope">
+                        <el-button
+                            type="text"
+                            icon="el-icon-edit"
+                            @click="handleClassEdit(scope.$index, scope.row)"
+                        >编辑</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -127,6 +148,45 @@
 		        <el-button type="primary" @click="insertEdit">确 定</el-button>
 		    </span>
 		</el-dialog>
+
+        <!-- 添加上课班级弹出框 -->
+		<el-dialog title="添加上课班级" :visible.sync="add_class_editVisible" width="30%">
+		    <el-form ref="form" :model="form" label-width="70px">
+                <el-form-item label="班级">
+                    <el-select v-model="add_param.teacherid" filterable>
+                        <el-option
+                            v-for="item in class_list"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+		        </el-form-item>
+		    </el-form>
+		    <span slot="footer" class="dialog-footer">
+		        <el-button @click="add_editVisible = false">取 消</el-button>
+		        <el-button type="primary" @click="insertEdit">确 定</el-button>
+		    </span>
+		</el-dialog>
+        <!-- 修改上课班级弹出框 -->
+		<el-dialog title="添加上课班级" :visible.sync="edit_class_editVisible" width="30%">
+		    <el-form ref="form" :model="form" label-width="70px">
+                <el-form-item label="班级">
+                    <el-select v-model="classes" multiple filterable>
+                        <el-option
+                            v-for="item in class_list"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
+		        </el-form-item>
+		    </el-form>
+		    <span slot="footer" class="dialog-footer">
+		        <el-button @click="add_editVisible = false">取 消</el-button>
+		        <el-button type="primary" @click="insertEdit">确 定</el-button>
+		    </span>
+		</el-dialog>
 		
     </div>
 </template>
@@ -154,14 +214,17 @@ export default {
             tableData: [],
 			idList: [],
             editVisible: false,
-			add_editVisible: false,
+            add_editVisible: false,
+            add_class_editVisible: false,
+            edit_class_editVisible: false,
             pageTotal: 0,
             form: {},
             idx: -1,
             id: -1,
             course_list: '',
             class_list: '',
-            teacher_list: ''
+            teacher_list: '',
+            classes: []
         };
     },
     created() {
@@ -186,6 +249,12 @@ export default {
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
+        },
+        handleInsert() {
+            this.add_class_editVisible = true
+        },
+        handleClassEdit() {
+            this.edit_class_editVisible = true
         },
         // 删除操作
         handleDelete(index, row) {

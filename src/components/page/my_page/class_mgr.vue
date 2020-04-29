@@ -27,7 +27,7 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="classid" la bel="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="classid" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="classname" label="班级名称" align="center"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">

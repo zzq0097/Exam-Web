@@ -79,14 +79,13 @@
                 <el-form-item label="考生答案："> {{ item.stuAnswer }} </el-form-item>
                 <el-form-item label="题目分值："> {{ item.score }} </el-form-item>
                 <el-form-item label="学生得分：" v-if="item.type === '选择' || item.type === '判断'">
-                    <el-col :span="6">
-                        <el-tag type="success" v-if="item.answer === item.stuAnswer">{{ item.score }}</el-tag>
-                        <el-tag type="danger" v-else>0</el-tag>
+                    <el-col :span="4">
+                        <el-input placeholder="请输入得分" v-model="stu_score[index]" disabled></el-input>
                     </el-col>
                 </el-form-item>
                 <el-form-item label="学生得分：" v-else>
-                    <el-col :span="6">
-                        <el-input  placeholder="请输入得分" v-model="stu_score[index]"></el-input>
+                    <el-col :span="4">
+                        <el-input placeholder="请输入得分" v-model="stu_score[index]"></el-input>
                     </el-col>
                 </el-form-item>
                 <hr/>
