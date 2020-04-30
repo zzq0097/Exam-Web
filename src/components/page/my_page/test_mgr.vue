@@ -32,9 +32,9 @@
 					</el-option>
 				</el-select>
 				<el-select v-model="query.difficulty" placeholder="难度" @change="getData" class="handle-select mr10">
-				    <el-option key="1" label="1" value="1"></el-option>
-				    <el-option key="2" label="2" value="2"></el-option>
-					<el-option key="3" label="3" value="3"></el-option>
+				    <el-option key="1" label="简单" value="简单"></el-option>
+				    <el-option key="2" label="中等" value="中等"></el-option>
+					<el-option key="3" label="困难" value="困难"></el-option>
 				</el-select>
                 <el-input v-model="query.key" placeholder="关键字" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
@@ -168,9 +168,9 @@
                 </template>
                 <el-form-item label="难度">
 				    <el-select v-model="form.difficulty">
-		            	<el-option label="1" value="1"></el-option>
-						<el-option label="2" value="2"></el-option>
-						<el-option label="3" value="3"></el-option>
+		            	<el-option label="1" value="简单"></el-option>
+						<el-option label="2" value="中等"></el-option>
+						<el-option label="3" value="困难"></el-option>
 		            </el-select>
 				</el-form-item>
             </el-form>
@@ -275,9 +275,9 @@
                 </template>
                 <el-form-item label="难度">
 				    <el-select v-model="add_param.difficulty">
-		            	<el-option label="1" value="1"></el-option>
-						<el-option label="2" value="2"></el-option>
-						<el-option label="3" value="3"></el-option>
+		            	<el-option label="1" value="简单"></el-option>
+						<el-option label="2" value="中等"></el-option>
+						<el-option label="3" value="困难"></el-option>
 		            </el-select>
 				</el-form-item>
 		    </el-form>

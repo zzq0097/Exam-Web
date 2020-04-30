@@ -222,7 +222,7 @@
 					<el-form-item label="难度">
 						<el-select v-model="strategy.difficulty">
 							<el-option label="简单" value="简单"></el-option>
-							<el-option label="一般" value="一般"></el-option>
+							<el-option label="中等" value="中等"></el-option>
 							<el-option label="困难" value="困难"></el-option>
 						</el-select>
 					</el-form-item>
