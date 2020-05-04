@@ -9,20 +9,17 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-select v-model="query.address" placeholder="考试场次" class="handle-select mr10">
+                <el-select v-model="table_select.paperid" placeholder="考试场次" class="handle-select mr10">
                     <el-option key="1" label="C++ | 2019-上" value="教师"></el-option>
                     <el-option key="2" label="Python | 2019-下" value="学生"></el-option>
 					<el-option key="3" label="Java | 2019-下" value="班级"></el-option>
                 </el-select>
-				<el-select v-model="query.name" placeholder="班级" class="handle-select mr10">
+				<el-select v-model="table_select.classid" placeholder="班级" class="handle-select mr10">
 					<el-option key="1" label="全年级" value="班级"></el-option>
 				    <el-option key="2" label="RB软工网161" value="教师"></el-option>
 				    <el-option key="3" label="RB软工网162" value="学生"></el-option>
 					<el-option key="4" label="RB软工移163" value="班级"></el-option>
 				</el-select>
-				<el-tag>试卷平均分：72</el-tag>
-                
-				<el-tag>试卷得分方差: 0.5</el-tag>
             </div>
             <el-table
                 :data="tableData"
@@ -30,133 +27,87 @@
                 class="table"
                 ref="multipleTable"
                 header-cell-class-name="table-header"
-                @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="content" label="题目"></el-table-column>
-                <el-table-column prop="rate" label="得分率" align="center"></el-table-column>
-                <el-table-column prop="average" label="平均分" align="center"></el-table-column>
-				<el-table-column prop="variance" label="方差" align="center"></el-table-column>
+                <el-table-column prop="maxnum" label="最高分" align="center"></el-table-column>
+                <el-table-column prop="minnum" label="最低分" align="center"></el-table-column>
+                <el-table-column prop="avgnum" label="平均分" align="center"></el-table-column>
+                <el-table-column prop="k" label="得分率" align="center"></el-table-column>v
             </el-table>
-            <div class="pagination">
-                <el-pagination
-                    background
-                    layout="total, prev, pager, next"
-                    :current-page="query.pageIndex"
-                    :page-size="query.pageSize"
-                    :total="pageTotal"
-                    @current-change="handlePageChange"
-                ></el-pagination>
+        </div>
+
+        <el-col :span="12" :offset="6">
+            <div class="schart-box">
+                <el-select v-model="bar_select.paperid" placeholder="请选择试卷">
+                    <el-option
+                        v-for="item in paper_list"
+                        :key="item.paperid"
+                        :label="item.paperid"
+                        :value="item.paperid">
+                    </el-option>
+                </el-select>
+                <el-select v-model="bar_select.classid" multiple placeholder="请选择班级">
+                    <el-option label="RB软工网161" value="1"></el-option>
+                    <el-option label="RB软工网162" value="2"></el-option>
+                </el-select>
+                <schart class="schart" canvasId="bar" :options="bar_option"></schart>
             </div>
-        </div>
-
-        <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item label="姓名">
-		            <el-input v-model="form.name"></el-input>
-		        </el-form-item>
-		        <el-form-item label="用户名">
-		            <el-input v-model="form.username"></el-input>
-		        </el-form-item>
-				<el-form-item label="密码">
-				    <el-input v-model="form.password"></el-input>
-				</el-form-item>
-				<el-form-item label="角色">
-				    <el-input v-model="form.role"></el-input>
-				</el-form-item>
-				<el-form-item label="班级">
-				    <el-input v-model="form.class"></el-input>
-				</el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
-            </span>
-        </el-dialog>
+        </el-col>
 		
-		<!-- 添加弹出框 -->
-		<el-dialog title="添加用户" :visible.sync="add_editVisible" width="30%">
-		    <el-form ref="form" :model="form" label-width="70px">
-		        <el-form-item label="姓名">
-		            <el-input v-model="form.name"></el-input>
-		        </el-form-item>
-		        <el-form-item label="用户名">
-		            <el-input v-model="form.username"></el-input>
-		        </el-form-item>
-				<el-form-item label="密码">
-				    <el-input v-model="form.password"></el-input>
-				</el-form-item>
-				<el-form-item label="角色">
-				    <el-input v-model="form.role"></el-input>
-				</el-form-item>
-				<el-form-item label="班级">
-				    <el-input v-model="form.class"></el-input>
-				</el-form-item>
-		    </el-form>
-		    <span slot="footer" class="dialog-footer">
-		        <el-button @click="add_editVisible = false">取 消</el-button>
-		        <el-button type="primary" @click="saveEdit">确 定</el-button>
-		    </span>
-		</el-dialog>
-		
-		<!-- 批量导入弹出框 -->
-		<el-dialog title="批量添加" :visible.sync="add_batch" width="30%">
-		    <el-form ref="form" :model="form" label-width="70px">
-		        <el-upload
-					class="upload-demo"
-					drag
-					action="https://jsonplaceholder.typicode.com/posts/"
-					multiple>
-					<i class="el-icon-upload"></i>
-					<div class="el-upload__text">将Excel文件拖到此处，或<em>点击上传</em></div>
-		        </el-upload>
-		    </el-form>
-		    <span slot="footer" class="dialog-footer">
-		        <el-button @click="add_batch = false">取 消</el-button>
-		        <el-button type="primary" @click="saveEdit">确 定</el-button>
-		    </span>
-		</el-dialog>
-
-        <div class="schart-box">
-            <el-select v-model="bar_paper" placeholder="请选择试卷">
-                <el-option label="RB软工网161" value="1"></el-option>
-                <el-option label="RB软工网162" value="2"></el-option>
-            </el-select>
-            <el-select v-model="bar_select" multiple placeholder="请选择班级">
-                <el-option label="RB软工网161" value="1"></el-option>
-                <el-option label="RB软工网162" value="2"></el-option>
-            </el-select>
-            <schart class="schart" canvasId="bar" :options="bar_option"></schart>
-        </div>
-		
-        <div class="schart-box">
-            <el-select v-model="pie_paper" placeholder="请选择试卷">
-                <el-option label="RB软工网161" value="1"></el-option>
-                <el-option label="RB软工网162" value="2"></el-option>
-            </el-select>
-            <el-select v-model="pie_select" placeholder="请选择班级">
-                <el-option label="RB软工网161" value="1"></el-option>
-                <el-option label="RB软工网162" value="2"></el-option>
-            </el-select>
-            <schart class="schart" canvasId="pie" :options="pie_option"></schart>
-        </div>
-
-        <div class="schart-box">
-            <el-select v-model="line_select" placeholder="请选择课程">
-                <el-option label="RB软工网161" value="1"></el-option>
-                <el-option label="RB软工网162" value="2"></el-option>
-            </el-select>
-            <schart class="schart" canvasId="line" :options="line_option"></schart>
-        </div>
+        <el-col :span="12" :offset="6">
+            <div class="schart-box">
+                <el-select v-model="pie_select.paperid" placeholder="请选择试卷">
+                    <el-option
+                        v-for="item in paper_list"
+                        :key="item.paperid"
+                        :label="item.paperid"
+                        :value="item.paperid">
+                    </el-option>
+                </el-select>
+                <el-select v-model="pie_select.classid" placeholder="请选择班级">
+                    <el-option
+                        v-for="item in class_list"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                    </el-option>
+                </el-select>
+                <el-button @click="getPieData">查询</el-button>
+                <schart class="schart" canvasId="pie" :options="pie_option"></schart>
+            </div>
+        </el-col>
+        
+        <el-col :span="12" :offset="6">
+            <div class="schart-box">
+                <el-select v-model="line_select.courseid" placeholder="请选择课程" class="handle-select mr10">
+                    <el-option label="RB软工网161" value="1"></el-option>
+                    <el-option label="RB软工网162" value="2"></el-option>
+                </el-select>
+                <el-select v-model="line_select.classid" placeholder="请选择班级" class="handle-select mr10">
+                    <el-option label="RB软工网161" value="1"></el-option>
+                    <el-option label="RB软工网162" value="2"></el-option>
+                </el-select>
+                <el-date-picker
+                    v-model="line_select.line_time"
+                    type="datetimerange"
+                    :picker-options="pickerOptions"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    align="right">
+                </el-date-picker>
+                <schart class="schart" canvasId="line" :options="line_option"></schart>
+            </div>
+        </el-col>
 
     </div>
 </template>
 
 <script>
 import Schart from 'vue-schart';
-import { selectStudent } from '../../../api/UserAPI.js';
+import { selectClassByPaper, selectSpread, getAllPaper } from '../../../api/ChartAPI'
 export default {
     name: 'user',
     components: {
@@ -164,12 +115,6 @@ export default {
     },
     data() {
         return {
-            query: {
-                address: '',
-                name: '',
-                pageIndex: 1,
-                pageSize: 10
-            },
             tableData: [{
                 id: 10,
                 content: 'Java有几种基本数据类型？',
@@ -177,26 +122,55 @@ export default {
                 rate: '60%',
                 variance: '1.1'
             }],
-            multipleSelection: [],
-            delList: [],
-            editVisible: false,
-			add_editVisible: false,
-			add_batch: false,
-            pageTotal: 0,
-            form: {},
-            idx: -1,
-            id: -1,
-            bar_paper: '',
-            pie_paper: '',
-            bar_select: '',
-            line_select: '',
-            pie_select: '',
+            pickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近三个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
+            table_select: {
+                paperid: '',
+                classid: ''
+            },
+            bar_select: {
+                paperid: '',
+                classid: ''
+            },
+            pie_select: {
+                paperid: '',
+                classid: ''
+            },
+            line_select: {
+                courseid: '',
+                classid: '',
+                line_time: ''
+            },
             bar_option: {
                 type: 'bar',
                 title: {
                     text: '成绩分析'
                 },
-                bgColor: '#fbfbfb',
                 labels: ['RB软工网161', 'RB软工网162', 'RB软工网163', 'RB软工网164', 'RB软工网165'],
                 datasets: [
                     {
@@ -225,7 +199,6 @@ export default {
                 legend: {
                     position: 'left'
                 },
-                bgColor: '#fbfbfb',
                 labels: ['60以下', '60-70', '70-80', '80-90', '90以上'],
                 datasets: [
                     {
@@ -238,7 +211,6 @@ export default {
                 title: {
                     text: '最近几次考试成绩趋势图'
                 },
-                bgColor: '#fbfbfb',
                 labels: ['6月', '7月', '8月', '9月', '10月'],
                 datasets: [
                     {
@@ -254,74 +226,45 @@ export default {
                         data: [10, 40, 50, 30, 20]
                     }
                 ]
-            }
+            },
+            class_list: '',
+            paper_list: ''
         };
     },
     created() {
-        this.getData();
+        getAllPaper().then(res=>{ this.paper_list = res })
     },
     methods: {
-		showAddDlg() {
-			this.add_editVisible = true
-		},
-		showAddsDlg() {
-			this.add_batch = true
-		},
-        // 获取 easy-mock 的模拟数据
-        getData() {
-            // getUserInfo(this.query).then(res => {
-            //     console.log(res);
-            //     this.tableData = res.list;
-            //     this.pageTotal = res.pageTotal || 50;
-            // });
+        getClassList(){
+            selectClassByPaper({paperid: this.paperid}).then(res=>{ this.class_list = res })
         },
-        // 触发搜索按钮
-        handleSearch() {
-            this.$set(this.query, 'pageIndex', 1);
-            this.getData();
-        },
-        // 删除操作
-        handleDelete(index, row) {
-            // 二次确认删除
-            this.$confirm('确定要删除吗？', '提示', {
-                type: 'warning'
-            })
-                .then(() => {
-                    this.$message.success('删除成功');
-                    this.tableData.splice(index, 1);
+        getPieData() {
+            if (this.pie_select.paperid === ''){
+                this.$message.error('请选择试卷')
+            } else {
+                selectSpread(this.pie_select).then(res=>{
+                    this.pie_option.datasets[0].data[0] = res.num1;
+                    this.pie_option.datasets[0].data[1] = res.num2;
+                    this.pie_option.datasets[0].data[2] = res.num3;
+                    this.pie_option.datasets[0].data[3] = res.num4;
+                    this.pie_option.datasets[0].data[4] = res.num5;
                 })
-                .catch(() => {});
-        },
-        // 多选操作
-        handleSelectionChange(val) {
-            this.multipleSelection = val;
-        },
-        delAllSelection() {
-            const length = this.multipleSelection.length;
-            let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
             }
-            this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
         },
-        // 编辑操作
-        handleEdit(index, row) {
-            this.idx = index;
-            this.form = row;
-            this.editVisible = true;
+        getLineData() {
+            selectSpread(this.pie_select).then(res=>{
+                
+            })
         },
-        // 保存编辑
-        saveEdit() {
-            this.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-            this.$set(this.tableData, this.idx, this.form);
+        getTableData() {
+            selectSpread(this.pie_select).then(res=>{
+                
+            })    
         },
-        // 分页导航
-        handlePageChange(val) {
-            this.$set(this.query, 'pageIndex', val);
-            this.getData();
+        getBarData() {
+            selectSpread(this.pie_select).then(res=>{
+                
+            })
         }
     }
 };
@@ -329,9 +272,8 @@ export default {
 
 <style scoped>
 .schart-box {
-    background-color: white;
+    text-align: center;
     display: inline-block;
-    margin: 20px;
 }
 .schart {
     width: 600px;
