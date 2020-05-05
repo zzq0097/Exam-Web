@@ -1,4 +1,5 @@
 import request from '../utils/request';
+import qs from 'qs';
 
 export const selectClassByPaper = query => {
     return request({
@@ -37,5 +38,16 @@ export const getAllPaper = query => {
         url: '/getAllPaper',
         method: 'get',
         params: query
+    });
+};
+
+export const getLineChart = query => {
+    return request({
+        url: '/line_chart',
+        method: 'get',
+        params: query,
+        paramsSerializer: params => {
+			return qs.stringify(params, { indices: false })
+		}
     });
 };

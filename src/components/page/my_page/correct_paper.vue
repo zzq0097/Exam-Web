@@ -133,6 +133,9 @@ export default {
         courseOption().then(res=>{ this.course_list = res });
         getClassList().then(res=>{ this.class_list = res });
     },
+    computed: {
+        
+    },
     methods: {
         // 获取 easy-mock 的模拟数据
         getData() {
@@ -159,11 +162,10 @@ export default {
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-            console.log(this.test_list);
+            console.log(this.stu_score);
             submitScore({score: this.stu_score}).then(res=>{
                 this.$message.success('批改提交成功');
             })
-            
         },
         // 分页导航
         handlePageChange(val) {
