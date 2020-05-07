@@ -80,18 +80,18 @@
                 <el-form-item label="题目分值："> {{ item.score }} </el-form-item>
                 <el-form-item label="学生得分：" v-if="item.type === '选择' || item.type === '判断'">
                     <el-col :span="4">
-                        <el-input placeholder="请输入得分" v-model="stu_score[index]" disabled></el-input>
+                        <el-input placeholder="请输入得分" v-model="correctData.stu_score[index]" disabled></el-input>
                     </el-col>
                 </el-form-item>
                 <el-form-item label="学生得分：" v-else>
                     <el-col :span="4">
-                        <el-input placeholder="请输入得分" v-model="stu_score[index]"></el-input>
+                        <el-input placeholder="请输入得分" v-model="correctData.stu_score[index]"></el-input>
                     </el-col>
                 </el-form-item>
                 <hr/>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
-		        <el-button @click="detailInfo = false">取 消</el-button>
+		        <el-button @click="editVisible = false">取 消</el-button>
 		        <el-button type="primary" @click="saveEdit">确 定</el-button>
 		    </span>
         </el-dialog>
@@ -124,6 +124,10 @@ export default {
             class_list: '',
             test_list: '',
             stu_score: [],
+            correctData: {
+                recordid: '',
+                creditDTOS: []
+            },
             answerid_list: [],
             answerscore_list: []
         };
@@ -158,12 +162,12 @@ export default {
             this.idx = index;
             this.form = row;
             this.editVisible = true;
+            this.correctData.recordid = row.recordId;
         },
         // 保存编辑
         saveEdit() {
             this.editVisible = false;
-            console.log(this.stu_score);
-            submitScore({score: this.stu_score}).then(res=>{
+            submitScore(this.correctData).then(res=>{
                 this.$message.success('批改提交成功');
             })
         },

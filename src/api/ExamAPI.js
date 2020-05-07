@@ -1,4 +1,5 @@
 import request from '../utils/request';
+import qs from 'qs';
 
 export const getPaperToCorrect = query => {
     return request({
@@ -10,8 +11,11 @@ export const getPaperToCorrect = query => {
 
 export const submitScore = query => {
     return request({
-        url: '/qqqq',
-        method: 'get',
-        params: query
+        url: '/correctObjective',
+        method: 'post',
+        params: query,
+        paramsSerializer: params => {
+			return qs.stringify(params, { indices: false })
+		}
     });
 };
