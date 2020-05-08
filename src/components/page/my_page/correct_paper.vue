@@ -80,7 +80,8 @@
                 <el-form-item label="题目分值："> {{ item.score }} </el-form-item>
                 <el-form-item label="学生得分：" v-if="item.type === '选择' || item.type === '判断'">
                     <el-col :span="4">
-                        <el-input placeholder="请输入得分" v-model="stu_score[index]" disabled></el-input>
+                        <el-tag type="success" v-if="item.answer === item.stuAnswer">{{ item.score }}</el-tag>
+                        <el-tag type="danger" v-else>0</el-tag>
                     </el-col>
                 </el-form-item>
                 <el-form-item label="学生得分：" v-else>
@@ -127,9 +128,7 @@ export default {
             correctData: {
                 recordid: '',
                 creditDTOS: []
-            },
-            answerid_list: [],
-            answerscore_list: []
+            }
         };
     },
     created() {
@@ -167,10 +166,19 @@ export default {
         saveEdit() {
             this.editVisible = false;
             this.correctData.recordid = this.form.recordId;
+            this.correctData.creditDTOS = [];
             for (let index = 0; index < this.test_list.length; index++) {
                 let questionid = this.test_list[index].questionid;
-                let score = this.stu_score[index];
-                this.correctData.stu_score[index].push({questionid: score});
+                let score = 0;
+                if (this.test_list[index].type === '选择' || this.test_list[index].type === '判断'){
+                    if (this.test_list[index].answer === this.test_list[index].stuAnswer){
+                        score = this.test_list[index].score
+                    }
+                } else {
+                    score = this.stu_score[index];
+                }
+                if (score === undefined) {score = 0}
+                this.correctData.creditDTOS.push({'questionid': questionid,'credit': score});
             }
             submitScore(this.correctData).then(res=>{
                 this.$message.success('批改提交成功');
