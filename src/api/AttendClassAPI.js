@@ -22,8 +22,11 @@ export const deleteGetClass = query => {
 export const updateGetClass = query => {
     return request({
 		url: '/updateGetClass',
-        method: 'put',
-        params: query
+        method: 'post',
+        params: query,
+        paramsSerializer: params => {
+			return qs.stringify(params, { indices: false })
+		}
     });
 };
 export const insertGetClass = query => {

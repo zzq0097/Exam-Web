@@ -54,7 +54,7 @@
                         <el-button
                             type="text"
                             icon="el-icon-edit"
-                            @click="handleInsert(scope.$index, scope.row)"
+                            @click="handleInsert(scope.row)"
                         >添加上课班级</el-button>
                     </template>
                 </el-table-column>
@@ -70,7 +70,7 @@
                         <el-button
                             type="text"
                             icon="el-icon-edit"
-                            @click="handleClassEdit(scope.$index, scope.row)"
+                            @click="handleClassEdit(scope.row)"
                         >编辑</el-button>
                     </template>
                 </el-table-column>
@@ -153,7 +153,7 @@
 		<el-dialog title="添加上课班级" :visible.sync="add_class_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
                 <el-form-item label="班级">
-                    <el-select v-model="add_param.teacherid" filterable>
+                    <el-select v-model="add_class.classid" filterable>
                         <el-option
                             v-for="item in class_list"
                             :key="item.id"
@@ -164,7 +164,7 @@
 		        </el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
-		        <el-button @click="add_editVisible = false">取 消</el-button>
+		        <el-button @click="add_class_editVisible = false">取 消</el-button>
 		        <el-button type="primary" @click="insertEdit">确 定</el-button>
 		    </span>
 		</el-dialog>
@@ -172,7 +172,7 @@
 		<el-dialog title="添加上课班级" :visible.sync="edit_class_editVisible" width="30%">
 		    <el-form ref="form" :model="form" label-width="70px">
                 <el-form-item label="班级">
-                    <el-select v-model="classes" multiple filterable>
+                    <el-select v-model="edit_class.classes" multiple filterable>
                         <el-option
                             v-for="item in class_list"
                             :key="item.id"
@@ -183,8 +183,8 @@
 		        </el-form-item>
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
-		        <el-button @click="add_editVisible = false">取 消</el-button>
-		        <el-button type="primary" @click="insertEdit">确 定</el-button>
+		        <el-button @click="edit_class_editVisible = false">取 消</el-button>
+		        <el-button type="primary" @click="multipleEdit">确 定</el-button>
 		    </span>
 		</el-dialog>
 		
@@ -194,6 +194,7 @@
 <script>
 import { teacherOption } from '../../../api/index.js';
 import { selectTeachInfo, deleteTeachInfo, updateTeachInfo, insertTeachInfo } from '../../../api/TeachInfoAPI.js';
+import { updateGetClass,insertGetClass } from '../../../api/AttendClassAPI.js';
 import { getClassList } from '../../../api/index.js';
 import { courseOption } from '../../../api/index.js';
 export default {
@@ -211,6 +212,14 @@ export default {
                 courseid: '',
                 teacherid: ''
             },
+            add_class: {
+                teachid: '',
+                classid: ''
+            },
+            edit_class: {
+                teachid: '',
+                classes: []
+            },
             tableData: [],
 			idList: [],
             editVisible: false,
@@ -223,8 +232,7 @@ export default {
             id: -1,
             course_list: '',
             class_list: '',
-            teacher_list: '',
-            classes: []
+            teacher_list: ''
         };
     },
     created() {
@@ -250,11 +258,17 @@ export default {
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
         },
-        handleInsert() {
-            this.add_class_editVisible = true
+        handleInsert(row) {
+            this.add_class_editVisible = true;
+            this.add_class.teachid = row.id
         },
-        handleClassEdit() {
-            this.edit_class_editVisible = true
+        handleClassEdit(row) {
+            this.edit_class_editVisible = true;
+            this.edit_class.teachid = row.id;
+            this.edit_class.classes = [];
+            for (let index = 0; index < row.classes.length; index++) {
+                this.edit_class.classes.push(row.classes[index].classid)
+            }
         },
         // 删除操作
         handleDelete(index, row) {
@@ -294,12 +308,21 @@ export default {
             this.editVisible = true;
         },
         insertEdit(){
-            this.add_editVisible = false;
-            insertTeachInfo(this.add_param).then(res=>{
-                this.$message.success(`添加成功`);
+            this.add_class_editVisible = false;
+            insertGetClass(this.add_class).then(res=>{
+                this.$message.success(res.msg);
 				this.getData();
             }).catch(()=>{
                 this.$message.error(`添加失败`);
+            })
+        },
+        multipleEdit(){
+            this.edit_class_editVisible = false;
+            updateGetClass(this.edit_class).then(res=>{
+                this.$message.success(res.msg);
+				this.getData();
+            }).catch(()=>{
+                this.$message.error(`修改失败`);
             })
         },
         // 保存编辑
