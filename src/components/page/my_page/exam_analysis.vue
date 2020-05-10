@@ -265,8 +265,8 @@ export default {
             }
         },
         getLineData() {
-            if (this.line_select.courseid === ''){
-                this.$message.error('请选择课程')
+            if (this.line_select.courseid === '' || this.line_select.line_time === ''){
+                this.$message.error('请选择课程或时间')
             } else {
                 getLineChart(this.line_select).then(res=>{
                     this.line_option.labels = [];

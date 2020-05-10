@@ -182,6 +182,7 @@ export default {
             }
             submitScore(this.correctData).then(res=>{
                 this.$message.success('批改提交成功');
+                getData();
             })
         },
         // 分页导航
