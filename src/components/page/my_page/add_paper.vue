@@ -43,7 +43,7 @@
 							header-cell-class-name="table-header"
 						>
 							<el-table-column prop="type" label="题目类型" align="center"></el-table-column>
-							<el-table-column prop="count" label="分值" align="center"></el-table-column>
+							<el-table-column prop="score" label="分值" align="center"></el-table-column>
 							<el-table-column prop="count" label="数量" align="center"></el-table-column>
 							<el-table-column label="组卷条件" align="center">
 								<template slot-scope="scope">
@@ -83,23 +83,6 @@
 							</el-table-column>
 						</el-table>
 					</el-form-item>
-					<!-- <template>
-						<el-form-item label="选择题每题分值">
-							<el-input style="width:80px"></el-input>
-						</el-form-item>
-						<el-form-item label="判断题每题分值">
-							<el-input style="width:80px"></el-input>
-						</el-form-item>
-						<el-form-item label="填空题每题分值">
-							<el-input style="width:80px"></el-input>
-						</el-form-item>
-						<el-form-item label="简答题每题分值">
-							<el-input style="width:80px"></el-input>
-						</el-form-item>
-						<el-form-item label="编程题每题分值">
-							<el-input style="width:80px"></el-input>
-						</el-form-item>
-					</template> -->
 					<el-form-item label="开始时间">
 						<el-date-picker
 							v-model="paper.starttime"

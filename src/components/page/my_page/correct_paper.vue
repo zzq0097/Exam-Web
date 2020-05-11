@@ -76,7 +76,13 @@
                     <el-form-item label="选项C："> {{ item.option3 }} </el-form-item>
                     <el-form-item label="选项D："> {{ item.option4 }} </el-form-item>
                 </template>
-                <el-form-item label="考生答案："> {{ item.stuAnswer }} </el-form-item>
+                <template>
+                    <el-form-item v-if="item.type === '编程'" label="考生答案：">
+                        ftp:122.51.73.146/code/r{{form.recordId}}q{{item.questionid}}.zip
+                    </el-form-item>
+                    <el-form-item v-else label="考生答案："> {{ item.stuAnswer }} </el-form-item>
+                </template>
+
                 <el-form-item label="题目分值："> {{ item.score }} </el-form-item>
                 <el-form-item label="学生得分：" v-if="item.type === '选择' || item.type === '判断'">
                     <el-col :span="4">

@@ -57,7 +57,7 @@
 				<el-table-column prop="startTime" label="考试开始时间" align="center"></el-table-column>
 				<el-table-column prop="finishTime" label="考试结束时间" align="center"></el-table-column>
 				<el-table-column prop="courseName" label="考试相关课程" align="center"></el-table-column>
-                <el-table-column label="操作" width="300" align="center">
+                <el-table-column label="操作" width="500" align="center">
                     <template slot-scope="scope">
                         <el-button
                             type="text"
@@ -75,6 +75,16 @@
                             class="red"
                             @click="handleDelete(scope.$index, scope.row)"
                         >删除</el-button>
+                        <el-button
+						    type="text"
+						    icon="el-icon-edit"
+						    @click="smallHandle(scope.row)"
+						>生成小试卷分析</el-button>
+                        <el-button
+						    type="text"
+						    icon="el-icon-edit"
+						    @click="bigHandle(scope.row)"
+						>生成大试卷分析</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -160,6 +170,23 @@
 		        <el-button type="primary" @click="saveEdit">确 定</el-button>
 		    </span>
 		</el-dialog>
+
+        <!-- 小试卷播放窗口 -->
+        <el-dialog title="监控视频" :visible.sync="s_link_editVisible" width="60%" height="60%">
+            <a>ftp:122.51.73.146/video/avi_{{ form.recordId }}.avi</a>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="s_link_editVisible = false">关闭</el-button>
+            </span>
+        </el-dialog>
+
+        <!-- 大试卷分析窗口 -->
+        <el-dialog title="监控视频" :visible.sync="b_link_editVisible" width="60%" height="60%">
+            <a>ftp:122.51.73.146/analysis/p{{ form.paperId }}.docx</a>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="b_link_editVisible = false">关闭</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -180,7 +207,9 @@ export default {
             tableData: [],
 			idList: [],
             editVisible: false,
-			add_editVisible: false,
+            add_editVisible: false,
+            s_link_editVisible: false,
+            b_link_editVisible: false,
 			detailInfo: false,
             pageTotal: 0,
             form: {},
@@ -221,6 +250,14 @@ export default {
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
+        },
+        bigHandle(row){
+            this.form = row;
+            this.b_link_editVisible = true
+        },
+        smallHandle(row){
+            this.form = row;
+            this.s_link_editVisible = true
         },
         // 删除操作
         handleDelete(index, row) {

@@ -39,7 +39,7 @@
                 <el-table-column prop="name" label="学生姓名" align="center"></el-table-column>
 				<el-table-column prop="className" label="班级" align="center"></el-table-column>
                 <el-table-column prop="courseName" label="课程" align="center"></el-table-column>
-                <el-table-column prop="startTime" label="考试时间" align="center"></el-table-column>
+                <el-table-column prop="startTime" label="考试时间" width="160" align="center"></el-table-column>
                 <el-table-column prop="grade" label="考生得分" align="center"></el-table-column>
                 <el-table-column prop="value" label="试卷总分" align="center"></el-table-column>
 				<el-table-column label="批改状态" align="center">
@@ -49,7 +49,7 @@
 					    >{{scope.row.status}}</el-tag>
 					</template>
 				</el-table-column>
-                <el-table-column label="操作" width="300" align="center">
+                <el-table-column label="操作" width="400" align="center">
                     <template slot-scope="scope">
                         <el-button
                             type="text"
@@ -104,7 +104,7 @@
 
         <!-- 视频播放窗口 -->
         <el-dialog title="监控视频" :visible.sync="videoVisible" width="60%" height="60%">
-            <a :href="form.monitor">{{ form.monitor }}</a>
+            <a>ftp:122.51.73.146/video/avi_{{ form.recordId }}.avi</a>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="videoVisible = false">关闭</el-button>
             </span>
