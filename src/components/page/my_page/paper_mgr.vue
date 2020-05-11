@@ -173,7 +173,10 @@
 
         <!-- 小试卷播放窗口 -->
         <el-dialog title="监控视频" :visible.sync="s_link_editVisible" width="60%" height="60%">
-            <a>ftp:122.51.73.146/video/avi_{{ form.recordId }}.avi</a>
+            <div v-for="item in link_list" :key="item.classid">
+                <el-tag style="margin-right: 5px">{{item.classname}}</el-tag>
+                <a>ftp:122.51.73.146/analysis/small/p{{ form.paperId }}c{{item.classid}}.docx</a>
+            </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="s_link_editVisible = false">关闭</el-button>
             </span>
@@ -181,7 +184,7 @@
 
         <!-- 大试卷分析窗口 -->
         <el-dialog title="监控视频" :visible.sync="b_link_editVisible" width="60%" height="60%">
-            <a>ftp:122.51.73.146/analysis/p{{ form.paperId }}.docx</a>
+            <a>ftp:122.51.73.146/analysis/big/p{{ form.paperId }}.docx</a>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="b_link_editVisible = false">关闭</el-button>
             </span>
@@ -192,6 +195,7 @@
 
 <script>
 import { selectPaper, deletePaper, selectQuestionByPaper, updatePaper } from '../../../api/PaperAPI';
+import { selectClassByPaper } from '../../../api/ChartAPI';
 import { getClassList } from '../../../api/index';
 import { courseOption } from '../../../api/index';
 export default {
@@ -217,7 +221,8 @@ export default {
             id: -1,
             course_list: '',
             class_list: '',
-            test_list: ''
+            test_list: '',
+            link_list: []
         };
     },
     created() {
@@ -257,6 +262,12 @@ export default {
         },
         smallHandle(row){
             this.form = row;
+            this.link_list = [],
+            selectClassByPaper({paperid: row.paperId}).then(res=>{ 
+                for (let index = 0; index < res.length; index++) {
+                    this.link_list.push({classid: res[index].classid,classname: res[index].classname})
+                }
+            })
             this.s_link_editVisible = true
         },
         // 删除操作
