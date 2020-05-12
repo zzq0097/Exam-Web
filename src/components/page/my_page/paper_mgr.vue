@@ -172,7 +172,7 @@
 		</el-dialog>
 
         <!-- 小试卷播放窗口 -->
-        <el-dialog title="监控视频" :visible.sync="s_link_editVisible" width="60%" height="60%">
+        <el-dialog title="小试卷分析" :visible.sync="s_link_editVisible" width="60%" height="60%">
             <div v-for="item in link_list" :key="item.classid">
                 <el-tag style="margin-right: 5px">{{item.classname}}</el-tag>
                 <a>ftp:122.51.73.146/analysis/small/p{{ form.paperId }}c{{item.classid}}.docx</a>
@@ -183,7 +183,7 @@
         </el-dialog>
 
         <!-- 大试卷分析窗口 -->
-        <el-dialog title="监控视频" :visible.sync="b_link_editVisible" width="60%" height="60%">
+        <el-dialog title="大试卷分析" :visible.sync="b_link_editVisible" width="60%" height="60%">
             <a>ftp:122.51.73.146/analysis/big/p{{ form.paperId }}.docx</a>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="b_link_editVisible = false">关闭</el-button>
@@ -194,7 +194,7 @@
 </template>
 
 <script>
-import { selectPaper, deletePaper, selectQuestionByPaper, updatePaper } from '../../../api/PaperAPI';
+import { selectPaper, deletePaper, selectQuestionByPaper, updatePaper, bigAnalysis, smallAnalysis } from '../../../api/PaperAPI';
 import { selectClassByPaper } from '../../../api/ChartAPI';
 import { getClassList } from '../../../api/index';
 import { courseOption } from '../../../api/index';
@@ -230,7 +230,7 @@ export default {
 		this.courseOption();
     },
     methods: {
-		add_paper(){
+		add_paper() {
 			this.add_editVisible = true
 		},
         // 获取 easy-mock 的模拟数据
@@ -258,17 +258,27 @@ export default {
         },
         bigHandle(row){
             this.form = row;
-            this.b_link_editVisible = true
+            bigAnalysis({paperid: row.paperId}).then(res=>{
+                this.$message.success(`生成成功`);
+                this.b_link_editVisible = true
+            }).catch(res=>{
+                this.$message.error(`生成失败`);
+            })
         },
         smallHandle(row){
             this.form = row;
-            this.link_list = [],
-            selectClassByPaper({paperid: row.paperId}).then(res=>{ 
-                for (let index = 0; index < res.length; index++) {
-                    this.link_list.push({classid: res[index].classid,classname: res[index].classname})
-                }
+            smallAnalysis({paperid: row.paperId}).then(res=>{
+                this.$message.success(`生成成功`);
+                this.link_list = [];
+                selectClassByPaper({paperid: row.paperId}).then(res=>{ 
+                    for (let index = 0; index < res.length; index++) {
+                        this.link_list.push({classid: res[index].classid,classname: res[index].classname})
+                    }
+                });
+                this.s_link_editVisible = true;
+            }).catch(res=>{
+                this.$message.error(`生成失败`);
             })
-            this.s_link_editVisible = true
         },
         // 删除操作
         handleDelete(index, row) {

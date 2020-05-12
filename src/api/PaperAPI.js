@@ -46,3 +46,19 @@ export const selectQuestionByPaper = query => {
         params: query
     });
 };
+
+export const bigAnalysis = query => {
+    return request({
+		url: '/largePaper',
+        method: 'get',
+        params: query
+    });
+};
+
+export const smallAnalysis = query => {
+    return request({
+		url: '/insertWord',
+        method: 'get',
+        params: query
+    });
+};
