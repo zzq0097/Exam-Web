@@ -45,7 +45,7 @@
 
         <el-col :span="12" :offset="6">
             <div class="schart-box">
-                <el-select v-model="bar_select.paperid" placeholder="请选择试卷">
+                <el-select v-model="bar_select.paperid" placeholder="请选择试卷" @change="getClassList(bar_select.paperid)">
                     <el-option
                         v-for="item in paper_list"
                         :key="item.paperid"
@@ -53,7 +53,7 @@
                         :value="item.paperid">
                     </el-option>
                 </el-select>
-                <el-select v-model="bar_select.classid" multiple placeholder="请选择班级">
+                <el-select v-model="bar_select.classids" multiple placeholder="请选择班级">
                     <el-option
                         v-for="item in class_list"
                         :key="item.classid"
@@ -170,7 +170,7 @@ export default {
             },
             bar_select: {
                 paperid: '',
-                classid: ''
+                classids: ''
             },
             pie_select: {
                 paperid: '',

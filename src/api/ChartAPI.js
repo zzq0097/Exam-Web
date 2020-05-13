@@ -21,7 +21,10 @@ export const selectAverage = query => {
     return request({
         url: '/selectAverage',
         method: 'get',
-        params: query
+        params: query,
+        paramsSerializer: params => {
+			return qs.stringify(params, { indices: false })
+		}
     });
 };
 

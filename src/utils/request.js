@@ -7,7 +7,7 @@ const service = axios.create({
     baseURL: 'http://localhost:8088/exam',
     // 线上
     // baseURL: 'http://122.51.73.146:8088/exam',
-    timeout: 5000
+    timeout: 30000
 });
 
 service.interceptors.request.use(
