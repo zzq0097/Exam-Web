@@ -60,7 +60,7 @@
                             <el-tag>D</el-tag> {{ scope.row.option4 }}
                         </span>
                         <span v-else-if="scope.row.type === '判断'">
-                            对/错
+                            对(A)/错(B)
                         </span>
                         <span v-else>
                             无
@@ -161,8 +161,8 @@
                 <template v-if="form.type === '判断'">
                     <el-form-item label="答案">
                         <el-radio-group v-model="form.answer">
-                            <el-radio label="对"></el-radio>
-                            <el-radio label="错"></el-radio>
+                            <el-radio label="A">对</el-radio>
+                            <el-radio label="B">错</el-radio>
                         </el-radio-group>
                     </el-form-item>
                 </template>
@@ -268,8 +268,8 @@
                 <template v-if="add_param.type === '判断'">
                     <el-form-item label="答案">
                         <el-radio-group v-model="add_param.answer">
-                            <el-radio label="对"></el-radio>
-                            <el-radio label="错"></el-radio>
+                            <el-radio label="A">对</el-radio>
+                            <el-radio label="B">错</el-radio>
                         </el-radio-group>
                     </el-form-item>
                 </template>
