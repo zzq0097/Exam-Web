@@ -64,7 +64,6 @@
                 ></el-pagination>
             </div>
 		<el-button type="primary" @click="showAddDlg">添加章节</el-button>
-		<el-button type="primary">批量导入</el-button>
         </div>
 
         <!-- 编辑弹出框 -->

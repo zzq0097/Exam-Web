@@ -56,7 +56,6 @@
                 ></el-pagination>
             </div>
 		<el-button type="primary" @click="showAddDlg">添加班级</el-button>
-		<el-button type="primary" @click="showAddsDlg">批量导入</el-button>
         </div>
 
         <!-- 编辑弹出框 -->

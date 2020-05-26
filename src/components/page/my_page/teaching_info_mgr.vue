@@ -86,7 +86,6 @@
                 ></el-pagination>
             </div>
 		<el-button type="primary" @click="showAddDlg">添加授课信息</el-button>
-		<el-button type="primary">批量导入</el-button>
         </div>
 
         <!-- 编辑弹出框 -->
@@ -165,7 +164,7 @@
 		    </el-form>
 		    <span slot="footer" class="dialog-footer">
 		        <el-button @click="add_class_editVisible = false">取 消</el-button>
-		        <el-button type="primary" @click="insertEdit">确 定</el-button>
+		        <el-button type="primary" @click="insertClass">确 定</el-button>
 		    </span>
 		</el-dialog>
         <!-- 修改上课班级弹出框 -->
@@ -308,6 +307,15 @@ export default {
             this.editVisible = true;
         },
         insertEdit(){
+            this.add_class_editVisible = false;
+            insertTeachInfo(this.add_param).then(res=>{
+                this.$message.success(res.msg);
+				this.getData();
+            }).catch(()=>{
+                this.$message.error(`添加失败`);
+            })
+        },
+        insertClass(){
             this.add_class_editVisible = false;
             insertGetClass(this.add_class).then(res=>{
                 this.$message.success(res.msg);

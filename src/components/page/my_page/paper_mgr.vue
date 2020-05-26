@@ -175,7 +175,7 @@
         <el-dialog title="小试卷分析" :visible.sync="s_link_editVisible" width="60%" height="60%">
             <div v-for="item in link_list" :key="item.classid">
                 <el-tag style="margin-right: 5px">{{item.classname}}</el-tag>
-                <a>ftp:122.51.73.146/analysis/small/p{{ form.paperId }}c{{item.classid}}.docx</a>
+                <a>ftp:122.51.73.146/analyse/small/p{{ form.paperId }}c{{item.classid}}.docx</a>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="s_link_editVisible = false">关闭</el-button>
@@ -184,7 +184,7 @@
 
         <!-- 大试卷分析窗口 -->
         <el-dialog title="大试卷分析" :visible.sync="b_link_editVisible" width="60%" height="60%">
-            <a>ftp:122.51.73.146/analysis/big/p{{ form.paperId }}.docx</a>
+            <a>ftp:122.51.73.146/analyse/big/p{{ form.paperId }}.docx</a>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="b_link_editVisible = false">关闭</el-button>
             </span>
